@@ -59,6 +59,7 @@ public class SighGrammar extends Grammar
     public rule _else           = reserved("else");
     public rule _while          = reserved("while");
     public rule _return         = reserved("return");
+    public rule _tear           = reserved( "tear");
 
     public rule number =
         seq(opt('-'), choice('0', digit.at_least(1)));
@@ -273,6 +274,34 @@ public class SighGrammar extends Grammar
         seq(ws, statement.at_least(1))
         .as_list(StatementNode.class)
         .push($ -> new RootNode($.span(), $.$[0]));
+
+    //-------------------OUR CHANGES---------------------------
+
+
+    public rule term =
+        string;
+
+    public rule fact_declaration =
+        seq(identifier, LPAREN, term.at_least(0), RPAREN, DOT)
+            .push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
+
+
+
+    public rule tear_statement = lazy(() -> choice(
+        this.fact_declaration));
+
+
+    public rule tear_statements =
+        statement.at_least(0)
+            .as_list(StatementNode.class);
+
+    public rule tear_block =
+        seq(LBRACE, statements, RBRACE)
+            .push($ -> new BlockNode($.span(), $.$[0]));
+
+
+    public rule tear_expression =
+        seq(_tear, tear_block);
 
     @Override public rule root () {
         return root;
