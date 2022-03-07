@@ -2,5 +2,7 @@ InterpreterTests.java
  InterpreterTests
 SemanticAnalysisTests.java
  SemanticAnalysisTests
+GrammarTests.java
+ GrammarTests
 BytecodeTests.java
  BytecodeTests

@@ -277,22 +277,19 @@ public class SighGrammar extends Grammar
 
     //-------------------OUR CHANGES---------------------------
 
-
     public rule term =
         string;
 
     public rule fact_declaration =
         seq(identifier, LPAREN, term.at_least(0), RPAREN, DOT)
             .push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
-
-
+            //.push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
 
     public rule tear_statement = lazy(() -> choice(
         this.fact_declaration));
 
-
     public rule tear_statements =
-        statement.at_least(0)
+        tear_statement.at_least(0)
             .as_list(StatementNode.class);
 
     public rule tear_block =

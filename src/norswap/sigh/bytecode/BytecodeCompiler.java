@@ -156,8 +156,8 @@ public class BytecodeCompiler
         run(root);
         GeneratedClass mainClass = new GeneratedClass(containerName, container.toByteArray());
         List<GeneratedClass> structClasses = structs.stream()
-            .map(it -> new GeneratedClass(it.a, it.b.toByteArray()))
-            .collect(Collectors.toList());
+                .map(it -> new GeneratedClass(it.a, it.b.toByteArray()))
+                .collect(Collectors.toList());
 
         return new CompilationResult(mainClass, structClasses);
     }
@@ -177,7 +177,7 @@ public class BytecodeCompiler
 
         // Top-level code belongs in the run method.
         method = container.visitMethod(ACC_PUBLIC | ACC_STATIC, "run",
-            "([Ljava/lang/String;)Ljava/lang/Object;", null, null);
+                "([Ljava/lang/String;)Ljava/lang/Object;", null, null);
         method.visitCode();
         topLevel = true;
         node.statements.forEach(this::run);
@@ -191,11 +191,11 @@ public class BytecodeCompiler
         // Traditional java main method to run standalone.
         // This just calls run, ignoring its return value.
         method = container.visitMethod(ACC_PUBLIC | ACC_STATIC, "main",
-            "([Ljava/lang/String;)V", null, null);
+                "([Ljava/lang/String;)V", null, null);
         method.visitCode();
         method.visitVarInsn(ALOAD, 0);
         method.visitMethodInsn(INVOKESTATIC, containerName,
-            "run", "([Ljava/lang/String;)Ljava/lang/Object;", false);
+                "run", "([Ljava/lang/String;)Ljava/lang/Object;", false);
         method.visitInsn(POP);
         method.visitInsn(RETURN); // explicitly necessary
         method.visitEnd();
@@ -541,7 +541,7 @@ public class BytecodeCompiler
             else if (decl instanceof FunDeclarationNode) {
                 runArguments(funType, node.arguments);
                 method.visitMethodInsn(INVOKESTATIC, containerName,
-                    decl.name(), methodDescriptor(funType), false);
+                        decl.name(), methodDescriptor(funType), false);
             }
             else { // TODO
                 throw new UnsupportedOperationException("variables or parameters containing a function value");
@@ -568,11 +568,11 @@ public class BytecodeCompiler
     {
         assert name.equals("print"); // only one at the moment
         method.visitFieldInsn(GETSTATIC, "java/lang/System", "out",
-            "Ljava/io/PrintStream;");
+                "Ljava/io/PrintStream;");
         runArguments(funType, arguments);
         method.visitInsn(DUP_X1); // we return the printed string!
         method.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println",
-            "(Ljava/lang/String;)V", false);
+                "(Ljava/lang/String;)V", false);
         return null;
     }
 
@@ -594,11 +594,12 @@ public class BytecodeCompiler
 
     private Object expressionStmt (ExpressionStatementNode node) {
         run(node.expression);
-        if (!(node.expression instanceof FunCallNode))
-            return null;
-        Type type = reactor.get(node.expression, "type");
-        if (!(type instanceof VoidType))
-            method.visitInsn(type instanceof IntType || type instanceof FloatType ? POP2 : POP);
+        if (node.expression instanceof AssignmentNode)
+            pop(reactor.get(node.expression, "type"));
+        else if (node.expression instanceof FunCallNode) {
+            Type type = reactor.get(node.expression, "type");
+            if (!(type instanceof VoidType)) pop(type);
+        }
         return null;
     }
 
@@ -697,8 +698,8 @@ public class BytecodeCompiler
             // TODO proper handling/representation of function object
             //  For now I use a method handle. There is no way to use it in the language however.
             method.visitLdcInsn(new Handle(
-                H_INVOKESTATIC, containerName, decl.name(),
-                methodDescriptor(reactor.get(decl, "type")), false));
+                    H_INVOKESTATIC, containerName, decl.name(),
+                    methodDescriptor(reactor.get(decl, "type")), false));
         }
         else if (decl instanceof SyntheticDeclarationNode) {
             switch (decl.name()) {
@@ -762,7 +763,8 @@ public class BytecodeCompiler
         if (node.left instanceof ReferenceNode) {
             ReferenceNode left = (ReferenceNode) node.left;
             run(node.right);
-            implicitConversion(node, node.right);
+            Type type = implicitConversion(node, node.right);
+            dup(type);
             method.visitVarInsn(nodeAsmType(node).getOpcode(ISTORE), varIndex(left));
         }
         else if (node.left instanceof ArrayAccessNode) {
@@ -771,18 +773,20 @@ public class BytecodeCompiler
             run(left.index);
             method.visitInsn(L2I);
             run(node.right);
-            implicitConversion(node, node.right);
+            Type type = implicitConversion(node, node.right);
+            dup_x2(type);
             method.visitInsn(nodeAsmType(node).getOpcode(IASTORE));
         }
         else if (node.left instanceof FieldAccessNode) {
             FieldAccessNode left = (FieldAccessNode) node.left;
             run(left.stem);
             run(node.right);
-            implicitConversion(node, node.right);
+            Type type = implicitConversion(node, node.right);
+            dup_x1(type);
             StructType structType = reactor.get(left.stem, "type");
             Type fieldType = reactor.get(node, "type");
             method.visitFieldInsn(PUTFIELD, structBinaryName(structType), left.fieldName,
-                fieldDescriptor(fieldType));
+                    fieldDescriptor(fieldType));
         }
         return null;
     }
@@ -798,7 +802,7 @@ public class BytecodeCompiler
 
         // generate constructor
         Type[] paramTypes =
-            node.fields.stream().map(f -> (Type) reactor.get(f, "type")).toArray(Type[]::new);
+                node.fields.stream().map(f -> (Type) reactor.get(f, "type")).toArray(Type[]::new);
         String descriptor = methodDescriptor(VoidType.INSTANCE, paramTypes);
         MethodVisitor init = struct.visitMethod(ACC_PUBLIC, "<init>", descriptor, null, null);
         init.visitCode();
@@ -902,15 +906,78 @@ public class BytecodeCompiler
 
     // ---------------------------------------------------------------------------------------------
 
-    private void implicitConversion (Type left, Type right) {
-        if (left instanceof FloatType && right instanceof IntType)
+    /**
+     * Implicitly converts the value at the top of the stack (of type {@code right}) to the type
+     * {@code left} if compatible, in which case {@code left} is returned. Otherwise returns {@code
+     * right}.
+     */
+    private Type implicitConversion (Type left, Type right) {
+        if (left instanceof FloatType && right instanceof IntType) {
             method.visitInsn(L2D);
+            return left;
+        }
+        return right;
     }
 
     // ---------------------------------------------------------------------------------------------
 
-    private void implicitConversion (SighNode left, SighNode right) {
-        implicitConversion((Type) reactor.get(left,  "type"), reactor.get(right, "type"));
+    /**
+     * Like {@link #implicitConversion(Type, Type)}, using the type attributes of the passed nodes.
+     */
+    private Type implicitConversion (SighNode left, SighNode right) {
+        return implicitConversion((Type) reactor.get(left,  "type"), reactor.get(right, "type"));
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Calls the right dup instruction depending on {@code type}, the type of the value at the top
+     * of the stack.
+     */
+    private void dup (Type type) {
+        if (type instanceof FloatType || type instanceof IntType)
+            method.visitInsn(DUP2);
+        else
+            method.visitInsn(DUP);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Calls the right dup_x2 ([x, y] => [y, x, y]) instruction depending on {@code type}, the type
+     * of the value at the top of the stack.
+     */
+    private void dup_x1 (Type type) {
+        if (type instanceof FloatType || type instanceof IntType)
+            method.visitInsn(DUP2_X1);
+        else
+            method.visitInsn(DUP_X1);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Calls the right dup_x2 ([x, y, z] => [z, x, y, z]) instruction depending on {@code type}, the
+     * type of the value at the top of the stack.
+     */
+    private void dup_x2 (Type type) {
+        if (type instanceof FloatType || type instanceof IntType)
+            method.visitInsn(DUP2_X2);
+        else
+            method.visitInsn(DUP_X2);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Calls the right pop instruction depending on {@code type}, the type of the value at the top
+     * of the stack.
+     */
+    private void pop (Type type) {
+        if (type instanceof FloatType || type instanceof IntType)
+            method.visitInsn(POP2);
+        else
+            method.visitInsn(POP);
     }
 
     // endregion
