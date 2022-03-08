@@ -137,5 +137,20 @@ public class GrammarTests extends AutumnTestFixture {
                 new BlockNode(null, asList(new ReturnNode(null, null)))));
     }
 
-    // ---------------------------------------------------------------------------------------------
+    // ----------------------------OUR GRAMMAR TEST---------------------------------------------------------------
+
+    @Test
+    public void testTearFact () {
+        rule = grammar.fact_declaration;
+
+        successExpect("man(\"Thomas\"). ", new FactDeclarationNode(null,
+        "man", asList(new StringLiteralNode(null, "Thomas"))));
+        successExpect("day_of_the_weekend(\"Monday\").", new FactDeclarationNode(null,
+        "day_of_the_weekend", asList(new StringLiteralNode(null, "Monday"))));
+
+        successExpect("Father(\"Harry\", \"Paul\").", new FactDeclarationNode(null,
+        "Father", asList(
+                new StringLiteralNode(null, "Harry"),
+                new StringLiteralNode(null, "Paul"))));
+    }
 }

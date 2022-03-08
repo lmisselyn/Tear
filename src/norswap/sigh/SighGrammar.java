@@ -277,25 +277,28 @@ public class SighGrammar extends Grammar
 
     //-------------------OUR CHANGES---------------------------
 
-    public rule term =
-        string;
+    public rule term =    // TODO: Check that it cannot be something else than a string
+        seq('"', string_content, '"')
+            .push($ -> new StringLiteralNode($.span(), $.$[0])).word(); // .word() needed or not ?
+
+    public rule terms =
+        term.sep(0, COMMA)
+            .as_list(StringLiteralNode.class);
 
     public rule fact_declaration =
-        seq(identifier, LPAREN, term.at_least(0), RPAREN, DOT)
-            .push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
-            //.push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
+        seq(identifier, LPAREN, terms, RPAREN, DOT)
+            .push($ -> new FactDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule tear_statement = lazy(() -> choice(
         this.fact_declaration));
 
     public rule tear_statements =
         tear_statement.at_least(0)
-            .as_list(StatementNode.class);
+            .as_list(StatementNode.class); // To modify to tear_statement once created ?
 
     public rule tear_block =
-        seq(LBRACE, statements, RBRACE)
+        seq(LBRACE, tear_statements, RBRACE)
             .push($ -> new BlockNode($.span(), $.$[0]));
-
 
     public rule tear_expression =
         seq(_tear, tear_block);
