@@ -15,10 +15,12 @@ import norswap.utils.exceptions.Exceptions;
 import norswap.utils.exceptions.NoStackException;
 import norswap.utils.visitors.ValuedVisitor;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static norswap.utils.Util.cast;
@@ -82,6 +84,7 @@ public final class Interpreter
         visitor.register(RootNode.class,                 this::root);
         visitor.register(BlockNode.class,                this::block);
         visitor.register(VarDeclarationNode.class,       this::varDecl);
+        visitor.register(FactDeclarationNode.class,      this::factDecl);
         // no need to visitor other declarations! (use fallback)
 
         // statements
@@ -533,14 +536,15 @@ public final class Interpreter
 
     // ---------------------------------------OUR CHANGES----------------------------------------------------
 
-    private Void factDecl (FactDeclarationNode node) { // TODO
+    private Void factDecl (FactDeclarationNode node) { // TODO: Delete the file sometimes ? Is lowerCase useful/ wanted ?
         try{
-            PrintWriter writer = new PrintWriter("tearFacts.txt", "UTF-8");
+            FileWriter file = new FileWriter("tearFacts.txt", true);
+            PrintWriter writer = new PrintWriter(file);
             String allterms = "";
             for (int i=0; i<node.terms.toArray().length; i++) {
-                allterms += node.terms.get(i).value;
+                allterms += "\"" + node.terms.get(i).value + "\", ";
             }
-            writer.println(node.name() + "(" + allterms + ")");
+            writer.println(node.name() + "(" + allterms.toLowerCase(Locale.ROOT).substring(0, allterms.length()-2) + ")" + ".");
             writer.close();
         }
         catch (IOException e){

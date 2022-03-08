@@ -218,7 +218,8 @@ public class SighGrammar extends Grammar
         this.if_stmt,
         this.while_stmt,
         this.return_stmt,
-        this.expression_stmt));
+        this.expression_stmt,
+        this.tear_expression));
 
     public rule statements =
         statement.at_least(0)
