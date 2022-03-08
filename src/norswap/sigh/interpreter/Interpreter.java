@@ -14,6 +14,9 @@ import norswap.utils.Util;
 import norswap.utils.exceptions.Exceptions;
 import norswap.utils.exceptions.NoStackException;
 import norswap.utils.visitors.ValuedVisitor;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -528,5 +531,22 @@ public final class Interpreter
         storage.set(scope, name, value);
     }
 
-    // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------OUR CHANGES----------------------------------------------------
+
+    private Void factDecl (FactDeclarationNode node) { // TODO
+        try{
+            PrintWriter writer = new PrintWriter("tearFacts.txt", "UTF-8");
+            String allterms = "";
+            for (int i=0; i<node.terms.toArray().length; i++) {
+                allterms += node.terms.get(i).value;
+            }
+            writer.println(node.name() + "(" + allterms + ")");
+            writer.close();
+        }
+        catch (IOException e){
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

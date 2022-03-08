@@ -135,6 +135,7 @@ public final class SemanticAnalysis
         walker.register(ParameterNode.class,            PRE_VISIT,  analysis::parameter);
         walker.register(FunDeclarationNode.class,       PRE_VISIT,  analysis::funDecl);
         walker.register(StructDeclarationNode.class,    PRE_VISIT,  analysis::structDecl);
+        walker.register(FactDeclarationNode.class,      PRE_VISIT,  analysis::factDecl);
 
         walker.register(RootNode.class,                 POST_VISIT, analysis::popScope);
         walker.register(BlockNode.class,                POST_VISIT, analysis::popScope);
@@ -810,6 +811,15 @@ public final class SemanticAnalysis
         scope.declare(node.name, node);
         R.set(node, "type", TypeType.INSTANCE);
         R.set(node, "declared", new StructType(node));
+    }
+
+    private void factDecl (FactDeclarationNode node) { // TODO: Check when terms will be extended
+        scope.declare(node.name, node);    // We will inherit the scope of the "Tear {...}"
+        R.set(node, "type", TypeType.INSTANCE);
+
+        forEachIndexed(node.terms, (i, param) -> {
+            R.set(param, "type", StringType.INSTANCE);
+        });
     }
 
     // endregion
