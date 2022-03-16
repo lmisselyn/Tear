@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="BytecodeTests" tests="10" skipped="0" failures="0" errors="0" timestamp="2022-03-07T19:14:03" hostname="HP-Pavilion" time="0.424">
+<testsuite name="BytecodeTests" tests="10" skipped="0" failures="0" errors="0" timestamp="2022-03-08T19:54:48" hostname="HP-Pavilion" time="0.438">
   <properties/>
-  <testcase name="basicPrintTest" classname="BytecodeTests" time="0.13"/>
-  <testcase name="testArrays" classname="BytecodeTests" time="0.05"/>
-  <testcase name="testIfWhile" classname="BytecodeTests" time="0.021"/>
-  <testcase name="testLiteralsAndUnary" classname="BytecodeTests" time="0.029"/>
-  <testcase name="testLogic" classname="BytecodeTests" time="0.077"/>
-  <testcase name="testMethod" classname="BytecodeTests" time="0.012"/>
-  <testcase name="testNumericBinary" classname="BytecodeTests" time="0.059"/>
-  <testcase name="testStructs" classname="BytecodeTests" time="0.013"/>
-  <testcase name="testVarDecl" classname="BytecodeTests" time="0.01"/>
-  <testcase name="testVariables" classname="BytecodeTests" time="0.021"/>
+  <testcase name="basicPrintTest" classname="BytecodeTests" time="0.113"/>
+  <testcase name="testArrays" classname="BytecodeTests" time="0.054"/>
+  <testcase name="testIfWhile" classname="BytecodeTests" time="0.022"/>
+  <testcase name="testLiteralsAndUnary" classname="BytecodeTests" time="0.03"/>
+  <testcase name="testLogic" classname="BytecodeTests" time="0.089"/>
+  <testcase name="testMethod" classname="BytecodeTests" time="0.017"/>
+  <testcase name="testNumericBinary" classname="BytecodeTests" time="0.061"/>
+  <testcase name="testStructs" classname="BytecodeTests" time="0.014"/>
+  <testcase name="testVarDecl" classname="BytecodeTests" time="0.011"/>
+  <testcase name="testVariables" classname="BytecodeTests" time="0.023"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -18,10 +18,8 @@ import norswap.utils.visitors.ValuedVisitor;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import static norswap.utils.Util.cast;
 import static norswap.utils.Vanilla.coIterate;
@@ -59,6 +57,7 @@ public final class Interpreter
     private ScopeStorage storage = null;
     private RootScope rootScope;
     private ScopeStorage rootStorage;
+    private HashMap<Integer, HashMap> fact_map;
 
     // ---------------------------------------------------------------------------------------------
 
@@ -94,6 +93,8 @@ public final class Interpreter
         visitor.register(ReturnNode.class,               this::returnStmt);
 
         visitor.registerFallback(node -> null);
+
+        fact_map = new HashMap<Integer, HashMap>();
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -536,21 +537,60 @@ public final class Interpreter
 
     // ---------------------------------------OUR CHANGES----------------------------------------------------
 
-    private Void factDecl (FactDeclarationNode node) { // TODO: Delete the file sometimes ? Is lowerCase useful/ wanted ?
-        try{
-            FileWriter file = new FileWriter("tearFacts.txt", true);
-            PrintWriter writer = new PrintWriter(file);
-            String allterms = "";
-            for (int i=0; i<node.terms.toArray().length; i++) {
-                allterms += "\"" + node.terms.get(i).value + "\", ";
+    @SuppressWarnings("unchecked")
+    private Void factDecl (FactDeclarationNode node) {
+        // HashMap<Int, HashMap<String, ArrayList<String>>>
+        ArrayList<String> allterms = new ArrayList<String>();
+
+        int nterms = node.terms.toArray().length;
+        for (int i=0; i<nterms; i++) {
+            allterms.add(node.terms.get(i).value);
+        }
+
+        if (fact_map.containsKey(nterms)) {
+            if (nterms == 1) {
+                ArrayList<String> term_list = allterms;
+                if (fact_map.get(nterms).containsKey(node.name)) {   // If key already in hashmap, add term(s) in the ArrayList
+                    term_list = (ArrayList<String>) fact_map.get(nterms).remove(node.name);
+                    for (int i = 0; i < allterms.size(); i++) {
+                        String current_term = allterms.get(i);
+                        if (!term_list.contains(current_term))
+                            term_list.add(current_term);
+                    }
+                    fact_map.get(nterms).put(node.name, term_list);
+                }
+                fact_map.get(nterms).put(node.name, term_list);
+            } else {
+                ArrayList<ArrayList<String>> term_list = new ArrayList<>();
+                if (fact_map.get(nterms).containsKey(node.name)) {   // If key already in hashmap, add term(s) in the ArrayList
+                    term_list = (ArrayList<ArrayList<String>>) fact_map.get(nterms).remove(node.name);
+                    ArrayList<String> current_list = new ArrayList<>();
+                    for (int i = 0; i < allterms.size(); i++) {
+                        String current_term = allterms.get(i);
+                        current_list.add(current_term);
+                    }
+                    if (!term_list.contains(current_list))
+                        term_list.add(current_list);
+                    fact_map.get(nterms).put(node.name, term_list);
+                }
+                fact_map.get(nterms).put(node.name, term_list);
             }
-            writer.println(node.name() + "(" + allterms.toLowerCase(Locale.ROOT).substring(0, allterms.length()-2) + ")" + ".");
-            writer.close();
+        } else {
+            if (nterms == 1) {
+                ArrayList<String> term_list = allterms;
+                HashMap<String, ArrayList<String>> temp = new HashMap<String, ArrayList<String>>();
+                temp.put(node.name, term_list);
+                fact_map.put(nterms, temp);
+            } else {
+                ArrayList<String> term_list = allterms;
+                HashMap<String, ArrayList<ArrayList<String>>> temp = new HashMap<String, ArrayList<ArrayList<String>>>();
+                ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
+                temp2.add(term_list);
+                temp.put(node.name, temp2);
+                fact_map.put(nterms, temp);
+            }
         }
-        catch (IOException e){
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        // System.out.println(fact_map);
         return null;
     }
 }

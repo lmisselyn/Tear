@@ -1,7 +1,9 @@
 fun main (args: String) {
     tear {
         man("Thomas").
+        man("Lambert").
         father("Paul", "Harry").
+        father("Pierre", "Louis").
     }
 }
 

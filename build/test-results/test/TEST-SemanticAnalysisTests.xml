@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SemanticAnalysisTests" tests="11" skipped="0" failures="0" errors="0" timestamp="2022-03-08T19:54:49" hostname="HP-Pavilion" time="0.125">
+  <properties/>
+  <testcase name="testArrayStructAccess" classname="SemanticAnalysisTests" time="0.026"/>
+  <testcase name="testCalls" classname="SemanticAnalysisTests" time="0.004"/>
+  <testcase name="testIfWhile" classname="SemanticAnalysisTests" time="0.006"/>
+  <testcase name="testInference" classname="SemanticAnalysisTests" time="0.003"/>
+  <testcase name="testLiteralsAndUnary" classname="SemanticAnalysisTests" time="0.008"/>
+  <testcase name="testNumericBinary" classname="SemanticAnalysisTests" time="0.027"/>
+  <testcase name="testOtherBinary" classname="SemanticAnalysisTests" time="0.026"/>
+  <testcase name="testRootAndBlock" classname="SemanticAnalysisTests" time="0.007"/>
+  <testcase name="testTypeAsValues" classname="SemanticAnalysisTests" time="0.002"/>
+  <testcase name="testUnconditionalReturn" classname="SemanticAnalysisTests" time="0.004"/>
+  <testcase name="testVarDecl" classname="SemanticAnalysisTests" time="0.007"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

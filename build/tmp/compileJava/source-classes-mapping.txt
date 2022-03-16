@@ -18,8 +18,8 @@ norswap/sigh/interpreter/ScopeStorage.java
  norswap.sigh.interpreter.ScopeStorage
 norswap/sigh/bytecode/AsmUtils.java
  norswap.sigh.bytecode.AsmUtils
-norswap/sigh/SighRunner.java
- norswap.sigh.SighRunner
+norswap/sigh/ast/ArrayAccessNode.java
+ norswap.sigh.ast.ArrayAccessNode
 norswap/sigh/ast/BinaryExpressionNode.java
  norswap.sigh.ast.BinaryExpressionNode
 norswap/sigh/ast/IntLiteralNode.java
@@ -30,6 +30,8 @@ norswap/sigh/ast/SimpleTypeNode.java
  norswap.sigh.ast.SimpleTypeNode
 norswap/sigh/interpreter/PassthroughException.java
  norswap.sigh.interpreter.PassthroughException
+norswap/sigh/ast/FactDeclarationNode.java
+ norswap.sigh.ast.FactDeclarationNode
 norswap/sigh/bytecode/BytecodeCompiler.java
  norswap.sigh.bytecode.BytecodeCompiler
  norswap.sigh.bytecode.BytecodeCompiler$1
@@ -85,16 +87,16 @@ norswap/sigh/ast/BinaryOperator.java
  norswap.sigh.ast.BinaryOperator
 norswap/sigh/scopes/DeclarationKind.java
  norswap.sigh.scopes.DeclarationKind
+norswap/sigh/types/FactType.java
+ norswap.sigh.types.FactType
 norswap/sigh/ast/ExpressionStatementNode.java
  norswap.sigh.ast.ExpressionStatementNode
-norswap/sigh/interpreter/Interpreter.java
- norswap.sigh.interpreter.Interpreter
- norswap.sigh.interpreter.Interpreter$1
- norswap.sigh.interpreter.Interpreter$Return
+norswap/sigh/types/StringType.java
+ norswap.sigh.types.StringType
 norswap/sigh/ast/TypeNode.java
  norswap.sigh.ast.TypeNode
-norswap/sigh/Test.java
- norswap.sigh.Test
+norswap/sigh/ast/ArrayTypeNode.java
+ norswap.sigh.ast.ArrayTypeNode
 norswap/sigh/ast/AssignmentNode.java
  norswap.sigh.ast.AssignmentNode
 norswap/sigh/ast/ArrayLiteralNode.java
@@ -131,9 +133,11 @@ norswap/sigh/bytecode/Null.java
  norswap.sigh.bytecode.Null
 norswap/sigh/types/ArrayType.java
  norswap.sigh.types.ArrayType
-norswap/sigh/ast/ArrayTypeNode.java
- norswap.sigh.ast.ArrayTypeNode
-norswap/sigh/types/StringType.java
- norswap.sigh.types.StringType
-norswap/sigh/ast/ArrayAccessNode.java
- norswap.sigh.ast.ArrayAccessNode
+norswap/sigh/SighRunner.java
+ norswap.sigh.SighRunner
+norswap/sigh/interpreter/Interpreter.java
+ norswap.sigh.interpreter.Interpreter
+ norswap.sigh.interpreter.Interpreter$1
+ norswap.sigh.interpreter.Interpreter$Return
+norswap/sigh/Test.java
+ norswap.sigh.Test
