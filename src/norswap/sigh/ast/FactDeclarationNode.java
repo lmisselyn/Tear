@@ -17,6 +17,8 @@ public class FactDeclarationNode extends DeclarationNode {
         this.terms = Util.cast(terms, List.class);
     }
 
+    public List<StringLiteralNode> getTerms () {return terms;}
+
     @Override public String name () {
         return name;
     }

@@ -813,11 +813,11 @@ public final class SemanticAnalysis
         R.set(node, "declared", new StructType(node));
     }
 
-    private void factDecl (FactDeclarationNode node) { // TODO: Check when terms will be extended
+    private void factDecl (FactDeclarationNode node) {
         scope.declare(node.name, node);    // We will inherit the scope of the "Tear {...}"
         R.set(node, "type", TypeType.INSTANCE);
 
-        forEachIndexed(node.terms, (i, param) -> {
+        forEachIndexed(node.getTerms(), (i, param) -> {
             R.set(param, "type", StringType.INSTANCE);
         });
     }

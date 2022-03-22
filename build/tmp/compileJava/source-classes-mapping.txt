@@ -67,6 +67,8 @@ norswap/sigh/ast/ExpressionNode.java
  norswap.sigh.ast.ExpressionNode
 norswap/sigh/types/Type.java
  norswap.sigh.types.Type
+norswap/sigh/types/ArrayType.java
+ norswap.sigh.types.ArrayType
 norswap/sigh/bytecode/TypeUtils.java
  norswap.sigh.bytecode.TypeUtils
 norswap/sigh/SemanticAnalysis.java
@@ -131,13 +133,17 @@ norswap/sigh/ast/StatementNode.java
  norswap.sigh.ast.StatementNode
 norswap/sigh/bytecode/Null.java
  norswap.sigh.bytecode.Null
-norswap/sigh/types/ArrayType.java
- norswap.sigh.types.ArrayType
+norswap/sigh/interpreter/Fact.java
+ norswap.sigh.interpreter.Fact
+norswap/sigh/Test.java
+ norswap.sigh.Test
 norswap/sigh/SighRunner.java
  norswap.sigh.SighRunner
+norswap/sigh/interpreter/Pair.java
+ norswap.sigh.interpreter.Pair
 norswap/sigh/interpreter/Interpreter.java
  norswap.sigh.interpreter.Interpreter
  norswap.sigh.interpreter.Interpreter$1
  norswap.sigh.interpreter.Interpreter$Return
-norswap/sigh/Test.java
- norswap.sigh.Test
+norswap/sigh/interpreter/FactStorage.java
+ norswap.sigh.interpreter.FactStorage
