@@ -7,6 +7,7 @@ import norswap.autumn.positions.LineMap;
 import norswap.autumn.positions.LineMapString;
 import norswap.sigh.ast.SighNode;
 import norswap.sigh.interpreter.Interpreter;
+import norswap.uranium.AttributeTreeFormatter;
 import norswap.uranium.Reactor;
 import norswap.utils.IO;
 import norswap.utils.visitors.Walker;
@@ -42,8 +43,8 @@ public final class Test
                 it.toString() + " (" + ((SighNode) it).span.startString(lineMap) + ")"));
 
             // Alternatively, print the whole tree:
-            // System.out.println(
-            //     AttributeTreeFormatter.formatWalkFields(tree, reactor, SighNode.class));
+            System.out.println(
+                 AttributeTreeFormatter.formatWalkFields(tree, reactor, SighNode.class));
             return;
         }
 

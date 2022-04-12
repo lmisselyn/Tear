@@ -88,12 +88,11 @@ public final class Interpreter
         visitor.register(IfNode.class,                   this::ifStmt);
         visitor.register(WhileNode.class,                this::whileStmt);
         visitor.register(ReturnNode.class,               this::returnStmt);
+        visitor.register(QueryNode.class,      this::query);
 
         visitor.registerFallback(node -> null);
 
         factStorage = new FactStorage();
-        // Old
-        //fact_map = new HashMap<Integer, HashMap>();
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -540,70 +539,45 @@ public final class Interpreter
     private Void factDecl (FactDeclarationNode node) {
         Pair pair = new Pair(node.name, node.getTerms().toArray().length);
         if (!factStorage.contains(pair)) {
-            Set<String> set = new HashSet<>();
-            for (int i = 0; i < pair.getArity(); i++) {
-                set.add(node.getTerms().get(i).value);
+            Set<Object> set;
+            if (pair.getArity() < 2) {
+                set = new HashSet<>();
+                set.add(node.getTerms().get(0).value);
+            } else {
+                set = new HashSet<>();
+                LinkedList<String> terms = new LinkedList<String>();
+                for (int i = 0; i < pair.getArity(); i++) {
+                    terms.add(node.getTerms().get(i).value);
+                }
+                set.add(terms);
             }
-            factStorage.newFact(new Fact(node.name(), set, set.size()));
+            factStorage.newFact(new Fact(node.name(), set, pair.getArity()));
         } else {
             Fact fact = factStorage.getFact(pair);
-            for (int i = 0; i < node.getTerms().toArray().length; i++) {
-                fact.addTerm(node.getTerms().get(i).value);
+            if (pair.getArity() < 2) {
+                fact.addTerm(node.getTerms().get(0).value);
+            } else {
+                LinkedList<String> terms = new LinkedList<String>();
+                for (int i = 0; i < pair.getArity(); i++) {
+                    terms.add(node.getTerms().get(i).value);
+                }
+                fact.addTerms(terms);
             }
         }
         System.out.println(factStorage);
-
         return null;
     }
-}
 
-//    // Old
-//    ArrayList<String> allterms = new ArrayList<String>();
-//    int nterms = node.getTerms().toArray().length;
-//        for (int i=0; i<nterms; i++) {
-//        allterms.add(node.getTerms().get(i).value);
-//        }
-//        if (fact_map.containsKey(nterms)) {
-//        if (nterms == 1) {
-//        ArrayList<String> term_list = allterms;
-//        if (fact_map.get(nterms).containsKey(node.name)) {   // If key already in hashmap, add term(s) in the ArrayList
-//        term_list = (ArrayList<String>) fact_map.get(nterms).remove(node.name);
-//        for (int i = 0; i < allterms.size(); i++) {
-//        String current_term = allterms.get(i);
-//        if (!term_list.contains(current_term))
-//        term_list.add(current_term);
-//        }
-//        fact_map.get(nterms).put(node.name, term_list);
-//        }
-//        fact_map.get(nterms).put(node.name, term_list);
-//        } else {
-//        ArrayList<ArrayList<String>> term_list = new ArrayList<>();
-//        if (fact_map.get(nterms).containsKey(node.name)) {   // If key already in hashmap, add term(s) in the ArrayList
-//        term_list = (ArrayList<ArrayList<String>>) fact_map.get(nterms).remove(node.name);
-//        ArrayList<String> current_list = new ArrayList<>();
-//        for (int i = 0; i < allterms.size(); i++) {
-//        String current_term = allterms.get(i);
-//        current_list.add(current_term);
-//        }
-//        if (!term_list.contains(current_list))
-//        term_list.add(current_list);
-//        fact_map.get(nterms).put(node.name, term_list);
-//        }
-//        fact_map.get(nterms).put(node.name, term_list);
-//        }
-//        } else {
-//        if (nterms == 1) {
-//        ArrayList<String> term_list = allterms;
-//        HashMap<String, ArrayList<String>> temp = new HashMap<String, ArrayList<String>>();
-//        temp.put(node.name, term_list);
-//        fact_map.put(nterms, temp);
-//        } else {
-//        ArrayList<String> term_list = allterms;
-//        HashMap<String, ArrayList<ArrayList<String>>> temp = new HashMap<String, ArrayList<ArrayList<String>>>();
-//        ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
-//        temp2.add(term_list);
-//        temp.put(node.name, temp2);
-//        fact_map.put(nterms, temp);
-//        }
-//        }
-////        System.out.println(fact_map);
+    private boolean query (QueryNode node) {
+        List<QueryArgNode> query = node.getQueryArgs();
+        boolean found = false;
+        for (int i = 0; i < query.size(); i++) {
+            QueryArgNode actQuery = query.get(i);
+            Pair pair = new Pair(actQuery.name(), actQuery.getTerms().size());
+            if (factStorage.getFact(pair) != null) {
+                found = true;
+            }
+        }
+        return found;
+    }
+}

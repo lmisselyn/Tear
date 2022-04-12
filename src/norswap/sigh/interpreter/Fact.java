@@ -11,7 +11,7 @@ import java.util.Set;
  */
 public class Fact {
     public final String name;
-    public Set<String> terms;
+    public Set<Object> terms;
     public Integer arity;
 
     @SuppressWarnings("unchecked")
@@ -21,11 +21,9 @@ public class Fact {
         this.arity = arity;
     }
 
-    public Set<String> getTerms() {return terms;}
+    public Set<Object> getTerms() {return terms;}
 
-    public String getName() {
-        return name;
-    }
+    public String getName() {return name;}
 
     public Integer getArity() {return arity;}
 
@@ -35,10 +33,10 @@ public class Fact {
     }
 
     // Add for arity > 1
-//    public Null addTerms(Object new_term) {
-//        terms.add(new_term);
-//        return null;
-//    }
+    public Null addTerms(Object new_term) {
+        terms.add(new_term);
+        return null;
+    }
 
     @Override
     public String toString() {

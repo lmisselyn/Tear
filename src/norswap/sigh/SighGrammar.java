@@ -60,6 +60,7 @@ public class SighGrammar extends Grammar
     public rule _while          = reserved("while");
     public rule _return         = reserved("return");
     public rule _tear           = reserved( "tear");
+    public rule _query          = reserved("query");
 
     public rule number =
         seq(opt('-'), choice('0', digit.at_least(1)));
@@ -190,8 +191,51 @@ public class SighGrammar extends Grammar
         .infix(EQUALS,
             $ -> new AssignmentNode($.span(), $.$[0], $.$[1]));
 
+    //-------------------OUR CHANGES---------------------------
+
+    public rule term =
+            seq('"', string_content, '"')
+                    .push($ -> new StringLiteralNode($.span(), $.$[0])).word();
+
+    public rule terms =
+            term.sep(0, COMMA)
+                    .as_list(StringLiteralNode.class);
+
+    public rule fact_declaration =
+            seq(identifier, LPAREN, terms, RPAREN, DOT)
+                    .push($ -> new FactDeclarationNode($.span(), $.$[0], $.$[1]));
+
+    public rule tear_statement = lazy(() -> choice(
+            this.fact_declaration)); // Rajouter les rules à coté de fact
+
+    public rule tear_statements =
+            tear_statement.at_least(0)
+                    .as_list(StatementNode.class); // StatementNode ?
+
+    public rule tear_block =
+            seq(LBRACE, tear_statements, RBRACE)
+                    .push($ -> new BlockNode($.span(), $.$[0]));
+
+    public rule tear_expression =
+            seq(_tear, tear_block);
+
+    public rule query_arg =
+            lazy(() -> choice(
+                    seq(identifier, LPAREN, terms, RPAREN)
+                            .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]))
+            ));
+
+    public rule query_args =
+            query_arg.sep(0, COMMA) // On peut faire une query d'un truc vide ? Argument à 0 ça accepte ça pour le moment.
+                    .as_list(QueryArgNode.class);  // Prendre que des "," comme "et" pour le moment ?
+
+    public rule query = seq(_query, LPAREN, query_args, RPAREN)
+            .push($ -> new QueryNode($.span(), $.$[0]));
+
+    //------------------------------------------------------------------------------
+
     public rule expression =
-        seq(assignment_expression);
+        choice(query, seq(assignment_expression));
 
     public rule expression_stmt =
         expression
@@ -211,6 +255,7 @@ public class SighGrammar extends Grammar
         seq(array_type);
 
     public rule statement = lazy(() -> choice(
+        this.tear_expression,
         this.block,
         this.var_decl,
         this.fun_decl,
@@ -218,8 +263,7 @@ public class SighGrammar extends Grammar
         this.if_stmt,
         this.while_stmt,
         this.return_stmt,
-        this.expression_stmt,
-        this.tear_expression));
+        this.expression_stmt));
 
     public rule statements =
         statement.at_least(0)
@@ -275,34 +319,6 @@ public class SighGrammar extends Grammar
         seq(ws, statement.at_least(1))
         .as_list(StatementNode.class)
         .push($ -> new RootNode($.span(), $.$[0]));
-
-    //-------------------OUR CHANGES---------------------------
-
-    public rule term =    // TODO: Check that it cannot be something else than a string
-        seq('"', string_content, '"')
-            .push($ -> new StringLiteralNode($.span(), $.$[0])).word(); // .word() needed or not ?
-
-    public rule terms =
-        term.sep(0, COMMA)
-            .as_list(StringLiteralNode.class);
-
-    public rule fact_declaration =
-        seq(identifier, LPAREN, terms, RPAREN, DOT)
-            .push($ -> new FactDeclarationNode($.span(), $.$[0], $.$[1]));
-
-    public rule tear_statement = lazy(() -> choice(
-        this.fact_declaration));
-
-    public rule tear_statements =
-        tear_statement.at_least(0)
-            .as_list(StatementNode.class); // To modify to tear_statement once created ?
-
-    public rule tear_block =
-        seq(LBRACE, tear_statements, RBRACE)
-            .push($ -> new BlockNode($.span(), $.$[0]));
-
-    public rule tear_expression =
-        seq(_tear, tear_block);
 
     @Override public rule root () {
         return root;

@@ -5,6 +5,10 @@ fun main (args: String) {
         father("Paul", "Harry").
         father("Pierre", "Louis").
     }
+    var test: Bool = query(man("Thomas"))
+    print(test)
+    var test2: Bool = query(woman("Bill"))
+    print(test2)
 }
 
 main("")

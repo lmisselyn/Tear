@@ -122,6 +122,8 @@ public final class SemanticAnalysis
         walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);
         walker.register(BinaryExpressionNode.class,     PRE_VISIT,  analysis::binaryExpression);
         walker.register(AssignmentNode.class,           PRE_VISIT,  analysis::assignment);
+        walker.register(QueryArgNode.class,             PRE_VISIT,  analysis::queryArg);
+        walker.register(QueryNode.class,                PRE_VISIT,  analysis::query);
 
         // types
         walker.register(SimpleTypeNode.class,           PRE_VISIT,  analysis::simpleType);
@@ -404,39 +406,70 @@ public final class SemanticAnalysis
             R.set(arg, "index", i);
         });
 
-        R.rule(node, "type")
-        .using(dependencies)
-        .by(r -> {
-            Type maybeFunType = r.get(0);
+//        R.rule(node, "type")
+//        .using(dependencies)
+//        .by(r -> {
+//            Type maybeFunType = r.get(0);
+//
+//            if (!(maybeFunType instanceof FunType)) {
+//                r.error("trying to call a non-function expression: " + node.function, node.function);
+//                return;
+//            }
+//
+//            FunType funType = cast(maybeFunType);
+//            r.set(0, funType.returnType);
+//
+//            Type[] params = funType.paramTypes;
+//            List<ExpressionNode> args = node.arguments;
+//
+//            if (params.length != args.size())
+//                r.errorFor(format("wrong number of arguments, expected %d but got %d",
+//                        params.length, args.size()),
+//                    node);
+//
+//            int checkedArgs = Math.min(params.length, args.size());
+//
+//            for (int i = 0; i < checkedArgs; ++i) {
+//                Type argType = r.get(i + 1);
+//                Type paramType = funType.paramTypes[i];
+//                if (!isAssignableTo(argType, paramType))
+//                    r.errorFor(format(
+//                            "incompatible argument provided for argument %d: expected %s but got %s",
+//                            i, paramType, argType),
+//                        node.arguments.get(i));
+//            }
+//        });
+    }
 
-            if (!(maybeFunType instanceof FunType)) {
-                r.error("trying to call a non-function expression: " + node.function, node.function);
-                return;
-            }
+    private void query (QueryNode node)
+    {
+        this.inferenceContext = node;
 
-            FunType funType = cast(maybeFunType);
-            r.set(0, funType.returnType);
-
-            Type[] params = funType.paramTypes;
-            List<ExpressionNode> args = node.arguments;
-
-            if (params.length != args.size())
-                r.errorFor(format("wrong number of arguments, expected %d but got %d",
-                        params.length, args.size()),
-                    node);
-
-            int checkedArgs = Math.min(params.length, args.size());
-
-            for (int i = 0; i < checkedArgs; ++i) {
-                Type argType = r.get(i + 1);
-                Type paramType = funType.paramTypes[i];
-                if (!isAssignableTo(argType, paramType))
-                    r.errorFor(format(
-                            "incompatible argument provided for argument %d: expected %s but got %s",
-                            i, paramType, argType),
-                        node.arguments.get(i));
-            }
+        Attribute[] dependencies = new Attribute[node.getQueryArgs().size() + 1];
+        dependencies[0] = node.attr("type");
+        forEachIndexed(node.getQueryArgs(), (i, arg) -> {
+            dependencies[i + 1] = arg.attr("type");
+            R.set(arg, "index", i);
         });
+
+        R.rule(node, "type")
+                .by(r -> {
+                    r.set(0, BoolType.INSTANCE);});
+    }
+
+    private void queryArg (QueryArgNode node) {
+        this.inferenceContext = node;
+
+        Attribute[] dependencies = new Attribute[node.getTerms().size() + 1];
+        dependencies[0] = node.attr("type");
+        forEachIndexed(node.getTerms(), (i, arg) -> {
+            dependencies[i + 1] = arg.attr("value");
+            R.set(arg, "index", i);
+        });
+
+        R.rule(node, "type")
+                .by(r -> {
+                    r.set(0, BoolType.INSTANCE);});
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -444,7 +477,7 @@ public final class SemanticAnalysis
     private void unaryExpression (UnaryExpressionNode node)
     {
         assert node.operator == UnaryOperator.NOT; // only one for now
-        R.set(node, "type", BoolType.INSTANCE);
+            R.set(node, "type", BoolType.INSTANCE);
 
         R.rule()
         .using(node.operand, "type")

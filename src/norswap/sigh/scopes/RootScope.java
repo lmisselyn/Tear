@@ -37,6 +37,7 @@ public final class RootScope extends Scope
 
     // root scope functions
     public final SyntheticDeclarationNode print = decl("print", FUNCTION);
+    public final SyntheticDeclarationNode query = decl("query", FUNCTION);
 
     // ---------------------------------------------------------------------------------------------
 
@@ -62,6 +63,7 @@ public final class RootScope extends Scope
         reactor.set(_null,  "type",       NullType.INSTANCE);
 
         reactor.set(print,  "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
+        reactor.set(query, "type", new FunType(StringType.INSTANCE, BoolType.INSTANCE)); // TODO : Modif when query more than a fact or if we make multiple argument in query
     }
 
     // ---------------------------------------------------------------------------------------------
