@@ -45,8 +45,8 @@ norswap/sigh/ast/FieldDeclarationNode.java
  norswap.sigh.ast.FieldDeclarationNode
 norswap/sigh/interpreter/Constructor.java
  norswap.sigh.interpreter.Constructor
-norswap/sigh/SighGrammar.java
- norswap.sigh.SighGrammar
+norswap/sigh/SemanticAnalysis.java
+ norswap.sigh.SemanticAnalysis
 norswap/sigh/scopes/RootScope.java
  norswap.sigh.scopes.RootScope
 norswap/sigh/interpreter/Null.java
@@ -145,9 +145,9 @@ norswap/sigh/bytecode/Null.java
  norswap.sigh.bytecode.Null
 norswap/sigh/types/ArrayType.java
  norswap.sigh.types.ArrayType
-norswap/sigh/SemanticAnalysis.java
- norswap.sigh.SemanticAnalysis
 norswap/sigh/SighRunner.java
  norswap.sigh.SighRunner
 norswap/sigh/Test.java
  norswap.sigh.Test
+norswap/sigh/SighGrammar.java
+ norswap.sigh.SighGrammar
