@@ -430,7 +430,7 @@ public final class SemanticAnalysis
 
         Attribute[] dependencies = new Attribute[node.getTerms().size() + 1];
         dependencies[0] = node.attr("type");
-        forEachIndexed(node.getTerms(), (i, arg) -> {
+        forEachIndexed(node.getTermsAsList(), (i, arg) -> {
             dependencies[i + 1] = arg.attr("value");
             R.set(arg, "index", i);
         });

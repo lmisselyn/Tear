@@ -193,6 +193,14 @@ public class SighGrammar extends Grammar
 
     //-------------------OUR CHANGES---------------------------
 
+    public rule upper_alpha =
+            choice('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+                    'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+    public rule logic_var =
+            upper_alpha
+                    .push($ -> $.str());
+
     public rule term =
         seq('"', string_content, '"')
         .push($ -> new StringLiteralNode($.span(), $.$[0])).word();
@@ -200,6 +208,10 @@ public class SighGrammar extends Grammar
     public rule terms =
         term.sep(0, COMMA)
         .as_list(StringLiteralNode.class);
+
+    public rule terms_n_logic_var =
+            choice(term, logic_var).sep(0, COMMA)
+                    .as_list(Object.class);
 
     public rule head_args =
         identifier.sep(0, COMMA)
@@ -237,9 +249,10 @@ public class SighGrammar extends Grammar
         seq(_tear, tear_block);
 
     public rule query_arg =
-        lazy(() -> choice(
-            seq(identifier, LPAREN, terms, RPAREN)
-            .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]))));
+            lazy(() -> choice(
+                    seq(identifier, LPAREN, terms_n_logic_var, RPAREN)
+                            .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]))
+            ));
 
     public rule query_args =
         query_arg.sep(0, COMMA) // On peut faire une query d'un truc vide ? Argument à 0 ça accepte ça pour le moment.
