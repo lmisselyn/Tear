@@ -4,7 +4,7 @@ fun main (args: String) {
         man("Lambert").
         father("Paul", "Harry").
         father("Pierre", "Louis").
-        // father(Paul, Marie) := child(Marie, Paul)
+        father(Paul, Marie) := child(Marie, Paul).
         // "Soleil".  // C'est possible de declarer juste ça.
     }
     var test: Bool = query(man("Thomas"))

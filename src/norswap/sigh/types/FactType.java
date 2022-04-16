@@ -4,6 +4,7 @@ import norswap.utils.NArrays;
 import java.util.Arrays;
 
 public final class FactType extends Type {
+    // Class isn't in use for the moment.
     public final Type[] termTypes;
 
     public FactType (Type... termTypes) {

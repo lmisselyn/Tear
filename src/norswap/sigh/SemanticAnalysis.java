@@ -124,6 +124,7 @@ public final class SemanticAnalysis
         walker.register(AssignmentNode.class,           PRE_VISIT,  analysis::assignment);
         walker.register(QueryArgNode.class,             PRE_VISIT,  analysis::queryArg);
         walker.register(QueryNode.class,                PRE_VISIT,  analysis::query);
+        walker.register(TailNode.class,                 PRE_VISIT,  analysis::tail);
 
         // types
         walker.register(SimpleTypeNode.class,           PRE_VISIT,  analysis::simpleType);
@@ -138,6 +139,7 @@ public final class SemanticAnalysis
         walker.register(FunDeclarationNode.class,       PRE_VISIT,  analysis::funDecl);
         walker.register(StructDeclarationNode.class,    PRE_VISIT,  analysis::structDecl);
         walker.register(FactDeclarationNode.class,      PRE_VISIT,  analysis::factDecl);
+        walker.register(RuleDeclarationNode.class,      PRE_VISIT,  analysis::ruleDecl);
 
         walker.register(RootNode.class,                 POST_VISIT, analysis::popScope);
         walker.register(BlockNode.class,                POST_VISIT, analysis::popScope);
@@ -817,6 +819,23 @@ public final class SemanticAnalysis
         R.set(node, "type", TypeType.INSTANCE);
 
         forEachIndexed(node.getTerms(), (i, param) -> {
+            R.set(param, "type", StringType.INSTANCE);
+        });
+    }
+
+    private void ruleDecl (RuleDeclarationNode node) {
+        scope.declare(node.head, node);    // We will inherit the scope of the "Tear {...}"
+        R.set(node, "type", TypeType.INSTANCE);
+
+        forEachIndexed(node.getHead_args(), (i, param) -> {
+            R.set(param, "type", StringType.INSTANCE);
+        });
+    }
+
+    private void tail (TailNode node) {
+        R.set(node, "type", TypeType.INSTANCE);
+
+        forEachIndexed(node.getArgs(), (i, param) -> {
             R.set(param, "type", StringType.INSTANCE);
         });
     }

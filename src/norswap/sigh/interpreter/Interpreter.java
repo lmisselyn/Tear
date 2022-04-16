@@ -53,8 +53,7 @@ public final class Interpreter
     private RootScope rootScope;
     private ScopeStorage rootStorage;
     private FactStorage factStorage;
-    // Old
-    // private HashMap<Integer, HashMap> fact_map;
+    private RuleStorage ruleStorage;
 
     // ---------------------------------------------------------------------------------------------
 
@@ -88,11 +87,13 @@ public final class Interpreter
         visitor.register(IfNode.class,                   this::ifStmt);
         visitor.register(WhileNode.class,                this::whileStmt);
         visitor.register(ReturnNode.class,               this::returnStmt);
-        visitor.register(QueryNode.class,      this::query);
+        visitor.register(QueryNode.class,                this::query);
+        visitor.register(RuleDeclarationNode.class,      this::rule);
 
         visitor.registerFallback(node -> null);
 
         factStorage = new FactStorage();
+        ruleStorage = new RuleStorage();
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -579,5 +580,12 @@ public final class Interpreter
             }
         }
         return found;
+    }
+
+    private Void rule (RuleDeclarationNode node) {
+        Rule rule = new Rule(node.head, node.getHead_args(), node.tails);
+        ruleStorage.addRule(rule);
+        System.out.println(ruleStorage);
+        return null;
     }
 }

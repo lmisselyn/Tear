@@ -45,8 +45,8 @@ norswap/sigh/ast/FieldDeclarationNode.java
  norswap.sigh.ast.FieldDeclarationNode
 norswap/sigh/interpreter/Constructor.java
  norswap.sigh.interpreter.Constructor
-norswap/sigh/SemanticAnalysis.java
- norswap.sigh.SemanticAnalysis
+norswap/sigh/ast/StatementNode.java
+ norswap.sigh.ast.StatementNode
 norswap/sigh/scopes/RootScope.java
  norswap.sigh.scopes.RootScope
 norswap/sigh/interpreter/Null.java
@@ -97,14 +97,12 @@ norswap/sigh/ast/BinaryOperator.java
  norswap.sigh.ast.BinaryOperator
 norswap/sigh/scopes/DeclarationKind.java
  norswap.sigh.scopes.DeclarationKind
-norswap/sigh/types/FactType.java
- norswap.sigh.types.FactType
+norswap/sigh/bytecode/Null.java
+ norswap.sigh.bytecode.Null
 norswap/sigh/ast/ExpressionStatementNode.java
  norswap.sigh.ast.ExpressionStatementNode
-norswap/sigh/interpreter/Interpreter.java
- norswap.sigh.interpreter.Interpreter
- norswap.sigh.interpreter.Interpreter$1
- norswap.sigh.interpreter.Interpreter$Return
+norswap/sigh/types/ArrayType.java
+ norswap.sigh.types.ArrayType
 norswap/sigh/ast/TypeNode.java
  norswap.sigh.ast.TypeNode
 norswap/sigh/ast/ArrayTypeNode.java
@@ -139,12 +137,22 @@ norswap/sigh/ast/BlockNode.java
  norswap.sigh.ast.BlockNode
 norswap/sigh/scopes/DeclarationContext.java
  norswap.sigh.scopes.DeclarationContext
-norswap/sigh/ast/StatementNode.java
- norswap.sigh.ast.StatementNode
-norswap/sigh/bytecode/Null.java
- norswap.sigh.bytecode.Null
-norswap/sigh/types/ArrayType.java
- norswap.sigh.types.ArrayType
+norswap/sigh/ast/RuleDeclarationNode.java
+ norswap.sigh.ast.RuleDeclarationNode
+norswap/sigh/SemanticAnalysis.java
+ norswap.sigh.SemanticAnalysis
+norswap/sigh/interpreter/RuleStorage.java
+ norswap.sigh.interpreter.RuleStorage
+norswap/sigh/interpreter/Rule.java
+ norswap.sigh.interpreter.Rule
+norswap/sigh/types/FactType.java
+ norswap.sigh.types.FactType
+norswap/sigh/interpreter/Interpreter.java
+ norswap.sigh.interpreter.Interpreter
+ norswap.sigh.interpreter.Interpreter$1
+ norswap.sigh.interpreter.Interpreter$Return
+norswap/sigh/ast/TailNode.java
+ norswap.sigh.ast.TailNode
 norswap/sigh/SighRunner.java
  norswap.sigh.SighRunner
 norswap/sigh/Test.java

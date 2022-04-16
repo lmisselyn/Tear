@@ -194,42 +194,60 @@ public class SighGrammar extends Grammar
     //-------------------OUR CHANGES---------------------------
 
     public rule term =
-            seq('"', string_content, '"')
-                    .push($ -> new StringLiteralNode($.span(), $.$[0])).word();
+        seq('"', string_content, '"')
+        .push($ -> new StringLiteralNode($.span(), $.$[0])).word();
 
     public rule terms =
-            term.sep(0, COMMA)
-                    .as_list(StringLiteralNode.class);
+        term.sep(0, COMMA)
+        .as_list(StringLiteralNode.class);
+
+    public rule head_args =
+        identifier.sep(0, COMMA)
+        .as_list(String.class);
+
+    public rule tail =
+        seq(identifier, LPAREN, head_args, RPAREN)
+        .push($ -> new TailNode($.span(), $.$[0], $.$[1]));
+
+    public rule tails =
+        tail.sep(1, COMMA)
+        .as_list(TailNode.class);
 
     public rule fact_declaration =
-            seq(identifier, LPAREN, terms, RPAREN, DOT)
-                    .push($ -> new FactDeclarationNode($.span(), $.$[0], $.$[1]));
+        seq(identifier, LPAREN, terms, RPAREN, DOT)
+        .push($ -> new FactDeclarationNode($.span(), $.$[0], $.$[1]));
+
+    public rule rule_declaration =
+        seq(identifier, LPAREN, head_args, RPAREN, COLON, EQUALS, tails, DOT)
+        .push($ -> new RuleDeclarationNode($.span(), $.$[0], $.$[1], $.$[2]));
 
     public rule tear_statement = lazy(() -> choice(
-            this.fact_declaration)); // Rajouter les rules à coté de fact
+        this.fact_declaration,
+        this.rule_declaration)); // Rajouter les rules à coté de fact
 
     public rule tear_statements =
-            tear_statement.at_least(0)
-                    .as_list(StatementNode.class); // StatementNode ?
+        tear_statement.at_least(0)
+        .as_list(StatementNode.class); // StatementNode ?
 
     public rule tear_block =
-            seq(LBRACE, tear_statements, RBRACE)
-                    .push($ -> new BlockNode($.span(), $.$[0]));
+        seq(LBRACE, tear_statements, RBRACE)
+        .push($ -> new BlockNode($.span(), $.$[0]));
 
     public rule tear_expression =
-            seq(_tear, tear_block);
+        seq(_tear, tear_block);
 
     public rule query_arg =
         lazy(() -> choice(
             seq(identifier, LPAREN, terms, RPAREN)
-                .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]))));
+            .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]))));
 
     public rule query_args =
-            query_arg.sep(0, COMMA) // On peut faire une query d'un truc vide ? Argument à 0 ça accepte ça pour le moment.
-                    .as_list(QueryArgNode.class);  // Prendre que des "," comme "ou" pour le moment ?
+        query_arg.sep(0, COMMA) // On peut faire une query d'un truc vide ? Argument à 0 ça accepte ça pour le moment.
+        .as_list(QueryArgNode.class);  // Prendre que des "," comme "ou" pour le moment ?
 
-    public rule query = seq(_query, LPAREN, query_args, RPAREN)
-            .push($ -> new QueryNode($.span(), $.$[0]));
+    public rule query =
+        seq(_query, LPAREN, query_args, RPAREN)
+        .push($ -> new QueryNode($.span(), $.$[0]));
 
     //------------------------------------------------------------------------------
 
