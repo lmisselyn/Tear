@@ -13,21 +13,24 @@ public class QueryArgNode extends ExpressionNode {
     public final HashMap<Integer, StringLiteralNode> terms;
 
     public final HashMap<Integer, String> logic_var;
+    public final List<Object> arg_list;
+    public final Object list_to_print;
 
     @SuppressWarnings("unchecked")
     public QueryArgNode (Span span, Object name, Object terms) {
         super(span);
+        this.list_to_print = terms;
         this.name = Util.cast(name, String.class);
-        List<Object> terms_list = (List<Object>) terms;
-        this.arity = terms_list.size();
+        this.arg_list = (List<Object>) terms;
+        this.arity = arg_list.size();
         this.terms = new HashMap<>();
         this.logic_var = new HashMap<>();
         for (int i = 0; i < arity; i++) {
-            if(terms_list.get(i).getClass().toString().equals("class norswap.sigh.ast.StringLiteralNode")) {
-                this.terms.put(i, (StringLiteralNode) terms_list.get(i));
+            if(arg_list.get(i).getClass().toString().equals("class norswap.sigh.ast.StringLiteralNode")) {
+                this.terms.put(i, (StringLiteralNode) arg_list.get(i));
             }
-            else if(terms_list.get(i).getClass().toString().equals("class java.lang.String")) {
-                this.logic_var.put(i, (String) terms_list.get(i));
+            else if(arg_list.get(i).getClass().toString().equals("class java.lang.String")) {
+                this.logic_var.put(i, (String) arg_list.get(i));
             }
         }
     }
@@ -49,9 +52,11 @@ public class QueryArgNode extends ExpressionNode {
         return name;
     }
 
-    public String contents ()
-    {
-        String args = terms.size() == 0 ? "()" : "(...)";
-        return name + args;
+    public String contents () {
+        StringBuilder str = new StringBuilder();
+        for(int i = 0; i < arity; i++) {
+            str.append(arg_list.get(i));
+        }
+        return name + "(" + str.toString() + ")";
     }
 }

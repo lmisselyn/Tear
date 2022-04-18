@@ -17,8 +17,7 @@ import norswap.utils.visitors.ValuedVisitor;
 import java.util.*;
 
 import static norswap.utils.Util.cast;
-import static norswap.utils.Vanilla.coIterate;
-import static norswap.utils.Vanilla.map;
+import static norswap.utils.Vanilla.*;
 
 /**
  * Implements a simple but inefficient interpreter for Sigh.
@@ -54,6 +53,7 @@ public final class Interpreter
     private ScopeStorage rootStorage;
     private FactStorage factStorage;
     private RuleStorage ruleStorage;
+    private List<ExecutionState> BacktrackStorage;
 
     // ---------------------------------------------------------------------------------------------
 
@@ -537,6 +537,7 @@ public final class Interpreter
     // ---------------------------------------OUR CHANGES----------------------------------------------------
 
     @SuppressWarnings("unchecked")
+    /*
     private Void factDecl (FactDeclarationNode node) {
         Pair pair = new Pair(node.name, node.getTerms().toArray().length);
         if (!factStorage.contains(pair)) {
@@ -565,27 +566,100 @@ public final class Interpreter
                 fact.addTerms(terms);
             }
         }
-        System.out.println(factStorage);
+        //System.out.println(factStorage);
+        return null;
+    }
+    */
+
+    private Void factDecl (FactDeclarationNode node) {
+        Rule rule = new Rule(node.name, node.getTerms(), null, null, true);
+        ruleStorage.addRule(rule);
         return null;
     }
 
+
+    private void unify() {
+
+    }
+
+    private List<BoundedPair> succeed(List<BoundedPair> bindings, Stack<ExecutionState> backtrack) {
+        BacktrackStorage = backtrack;
+        return bindings;
+    }
+
+    private void doBacktrack(Stack<ExecutionState> backtrack) {
+        ExecutionState state = backtrack.pop();
+        satisfy(backtrack, state.getBindings(), state.getRules(), state.getGoals());
+    }
+
+    private void tryRule(Stack<ExecutionState> backtrack, List<BoundedPair> bindings,
+                         List<Rule> rules, List<QueryArgNode> goals) {
+
+    }
+
+    /**
+     * @param backtrack : Stack of execution states
+     * @param bindings : List of pairs (logicVariable, term)
+     * @param goals : goals to achieve
+     * @param rules : rules linked with the goals
+     *
+     * @return A List of bindings that satisfies the query
+     */
+    private List<BoundedPair> satisfy(Stack<ExecutionState> backtrack, List<BoundedPair> bindings,
+                         List<Rule> rules, List<QueryArgNode> goals) {
+        // 1: All goals solved: solution found.
+        // 2: No more rules for first goal, backtrack to last choice point, or fail.
+        // 3: Try the next rule for the current goal.
+        if (goals.isEmpty()) return succeed(bindings, backtrack);
+        else if (rules.isEmpty()) {
+            if (backtrack.isEmpty()) {return null;}
+            else {doBacktrack(backtrack);}
+        }
+        else {tryRule(backtrack, bindings, rules, goals);}
+        return bindings;
+    }
+
+    /**
+     * Take the name of a goal and return a list of rules which have
+     * the predicate 'name' on the left side
+     */
+    private List<Rule> rules_for(String name) {
+        if (ruleStorage.contains(name)) {
+            return ruleStorage.getRule(name);
+        } else {return null;}
+    }
+
     private boolean query (QueryNode node) {
-        List<QueryArgNode> query = node.getQueryArgs();
-        boolean found = false;
-        for (int i = 0; i < query.size(); i++) {
-            QueryArgNode actQuery = query.get(i);
-            Pair pair = new Pair(actQuery.name(), actQuery.getTerms().size());
-            if (factStorage.getFact(pair) != null) {
-                found = true;
+        List<QueryArgNode> query_goals = node.getQueryArgs();
+        List<Rule> query_rules = new ArrayList<Rule>();
+        for(int i = 0; i < query_goals.size(); i++) {
+            List<Rule> rules = rules_for(query_goals.get(i).name);
+            if (rules != null) {
+                query_rules.addAll(rules);
+            }
+        } if (query_rules.isEmpty()) {return false;}
+
+        List<BoundedPair> bindings = new ArrayList<BoundedPair>();
+        Stack<ExecutionState> backtrack = new Stack<ExecutionState>();
+        //List<BoundedPair> result = satisfy(backtrack, bindings, query_rules, query_goals);
+        for (int i = 0; i < query_rules.size(); i++) {
+            Rule r = query_rules.get(i);
+            if(r.fact) {
+                Boolean bool = true;
+                List<StringLiteralNode> rule_args = r.get_args();
+                List<StringLiteralNode> query_args = query_goals.get(0).getTermsAsList();
+                for(int j = 0; j < rule_args.size(); j++) {
+                    if(!(rule_args.get(j).getValue().equals(query_args.get(j).getValue()))) {bool = false;}
+                } if(bool) {return true;}
             }
         }
-        return found;
+        return false;
     }
 
     private Void rule (RuleDeclarationNode node) {
-        Rule rule = new Rule(node.head, node.getHead_args(), node.tails);
+        Rule rule = new Rule(node.head, node.getHead_args(), node.tails, node.logic_operand, false);
         ruleStorage.addRule(rule);
-        System.out.println(ruleStorage);
+        //System.out.println(ruleStorage);
         return null;
     }
 }

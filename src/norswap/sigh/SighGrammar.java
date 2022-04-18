@@ -52,6 +52,10 @@ public class SighGrammar extends Grammar
     public rule DOLLAR          = word("$");
     public rule COMMA           = word(",");
 
+    public rule OR              = word("OR");
+
+    public rule AND             = word("AND");
+
     public rule _var            = reserved("var");
     public rule _fun            = reserved("fun");
     public rule _struct         = reserved("struct");
@@ -198,7 +202,7 @@ public class SighGrammar extends Grammar
                     'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
     public rule logic_var =
-            upper_alpha
+            seq(upper_alpha, id_part.at_least(0))
                     .push($ -> $.str());
 
     public rule term =
@@ -221,9 +225,19 @@ public class SighGrammar extends Grammar
         seq(identifier, LPAREN, head_args, RPAREN)
         .push($ -> new TailNode($.span(), $.$[0], $.$[1]));
 
+    public rule logic_or =
+            seq(OR).push($ -> $.str());
+
+    public rule logic_and =
+            seq(AND).push($ -> $.str());
+
+    public rule logic_operand =
+            choice(logic_or, logic_and)
+                    .push($ -> $.str());
+
     public rule tails =
-        tail.sep(1, COMMA)
-        .as_list(TailNode.class);
+        choice(seq(tail, usual_whitespace, logic_operand), tail).sep(1, usual_whitespace)
+        .as_list(Object.class);
 
     public rule fact_declaration =
         seq(identifier, LPAREN, terms, RPAREN, DOT)

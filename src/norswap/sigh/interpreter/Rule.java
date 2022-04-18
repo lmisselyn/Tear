@@ -1,4 +1,5 @@
 package norswap.sigh.interpreter;
+import norswap.sigh.ast.StringLiteralNode;
 import norswap.sigh.ast.TailNode;
 import norswap.utils.Util;
 
@@ -13,18 +14,44 @@ import java.util.Set;
  */
 public class Rule {
     public final String head;
-    public final List<String> head_args;
+    public final List<StringLiteralNode> head_args;
     public final List<TailNode> tails;
+    public final List<String> logic_operands;
+    public final Boolean fact;
+
 
     @SuppressWarnings("unchecked")
-    public Rule(Object head, Object head_args, Object tails){
+    public Rule(Object head, Object head_args, Object tails, Object logic_operands, Boolean fact){
+        this.fact = fact;
         this.head = Util.cast(head, String.class);
         this.head_args = Util.cast(head_args, List.class);
-        this.tails = Util.cast(tails, List.class);
+        if(!fact) {
+            this.tails = Util.cast(tails, List.class);
+            this.logic_operands = (List<String>) logic_operands;
+        }
+        else {
+            this.tails = null;
+            this.logic_operands = null;
+        }
+    }
+
+    public List<StringLiteralNode> get_args(){
+        return head_args;
     }
 
     @Override
     public String toString() {
-        return head + '(' + head_args + ')' +":= " + tails;
+        if (fact) {
+            return head + '(' + head_args + ')';
+        }
+        String str = "";
+        Integer size = tails.size();
+        for(int i = 0; i < size; i++) {
+            str += tails.get(i) + " ";
+            if (i < size-1) {
+                str += logic_operands.get(i) + " ";
+            }
+        }
+        return head + '(' + head_args + ')' +":= " + str;
     }
 }

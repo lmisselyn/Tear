@@ -15,4 +15,8 @@ public final class StringLiteralNode extends ExpressionNode
     @Override public String contents () {
         return String.format("\"%s\"", value);
     }
+
+    public String getValue(){
+        return value;
+    }
 }
