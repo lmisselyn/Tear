@@ -263,17 +263,15 @@ public class SighGrammar extends Grammar
         seq(_tear, tear_block);
 
     public rule query_arg =
-            lazy(() -> choice(
-                    seq(identifier, LPAREN, terms_n_logic_var, RPAREN)
-                            .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]))
-            ));
+        seq(identifier, LPAREN, terms_n_logic_var, RPAREN)
+                .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]));
 
     public rule query_args =
         query_arg.sep(0, COMMA) // On peut faire une query d'un truc vide ? Argument à 0 ça accepte ça pour le moment.
         .as_list(QueryArgNode.class);  // Prendre que des "," comme "ou" pour le moment ?
 
     public rule query =
-        seq(_query, LPAREN, query_args, RPAREN)
+        seq(_query, LPAREN, query_arg, RPAREN)
         .push($ -> new QueryNode($.span(), $.$[0]));
 
     //------------------------------------------------------------------------------

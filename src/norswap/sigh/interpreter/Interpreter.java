@@ -578,10 +578,7 @@ public final class Interpreter
     }
 
 
-    private void unify() {
-
-    }
-
+    /*
     private List<BoundedPair> succeed(List<BoundedPair> bindings, Stack<ExecutionState> backtrack) {
         BacktrackStorage = backtrack;
         return bindings;
@@ -596,6 +593,7 @@ public final class Interpreter
                          List<Rule> rules, List<QueryArgNode> goals) {
 
     }
+    */
 
     /**
      * @param backtrack : Stack of execution states
@@ -605,6 +603,7 @@ public final class Interpreter
      *
      * @return A List of bindings that satisfies the query
      */
+    /*
     private List<BoundedPair> satisfy(Stack<ExecutionState> backtrack, List<BoundedPair> bindings,
                          List<Rule> rules, List<QueryArgNode> goals) {
         // 1: All goals solved: solution found.
@@ -618,6 +617,7 @@ public final class Interpreter
         else {tryRule(backtrack, bindings, rules, goals);}
         return bindings;
     }
+    */
 
     /**
      * Take the name of a goal and return a list of rules which have
@@ -630,14 +630,13 @@ public final class Interpreter
     }
 
     private boolean query (QueryNode node) {
-        List<QueryArgNode> query_goals = node.getQueryArgs();
+        QueryArgNode query_goals = node.getQueryArgs();
         List<Rule> query_rules = new ArrayList<Rule>();
-        for(int i = 0; i < query_goals.size(); i++) {
-            List<Rule> rules = rules_for(query_goals.get(i).name);
-            if (rules != null) {
-                query_rules.addAll(rules);
-            }
-        } if (query_rules.isEmpty()) {return false;}
+        List<Rule> rules = rules_for(query_goals.name);
+        if (rules != null) {
+            query_rules.addAll(rules);
+        }
+        if (query_rules.isEmpty()) {return false;}
 
         List<BoundedPair> bindings = new ArrayList<BoundedPair>();
         Stack<ExecutionState> backtrack = new Stack<ExecutionState>();
@@ -647,7 +646,7 @@ public final class Interpreter
             if(r.fact) {
                 Boolean bool = true;
                 List<StringLiteralNode> rule_args = r.get_args();
-                List<StringLiteralNode> query_args = query_goals.get(0).getTermsAsList();
+                List<StringLiteralNode> query_args = query_goals.getTermsAsList();
                 for(int j = 0; j < rule_args.size(); j++) {
                     if(!(rule_args.get(j).getValue().equals(query_args.get(j).getValue()))) {bool = false;}
                 } if(bool) {return true;}

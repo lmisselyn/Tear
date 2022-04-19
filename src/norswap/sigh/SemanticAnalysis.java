@@ -413,12 +413,8 @@ public final class SemanticAnalysis
     {
         this.inferenceContext = node;
 
-        Attribute[] dependencies = new Attribute[node.getQueryArgs().size() + 1];
+        Attribute[] dependencies = new Attribute[1];
         dependencies[0] = node.attr("type");
-        forEachIndexed(node.getQueryArgs(), (i, arg) -> {
-            dependencies[i + 1] = arg.attr("type");
-            R.set(arg, "index", i);
-        });
 
         R.rule(node, "type")
                 .by(r -> {
