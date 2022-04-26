@@ -6,21 +6,25 @@ import norswap.utils.Util;
 import java.util.List;
 
 public class QueryNode extends ExpressionNode {
-    public final QueryArgNode queryArgs;
+    public final List<QueryArgNode> queryArgs;
 
     @SuppressWarnings("unchecked")
     public QueryNode(Span span, Object queryArgs) {
         super(span);
-        this.queryArgs = (QueryArgNode) queryArgs;
+        this.queryArgs = Util.cast(queryArgs, List.class);
 
     }
 
-    public QueryArgNode getQueryArgs() {
+    public List<QueryArgNode> getQueryArgs() {
         return queryArgs;
     }
 
     public String contents ()
     {
-        return queryArgs.contents();
+        String str = "";
+        for(int i = 0; i < queryArgs.size(); i++){
+            str += queryArgs.get(i).contents() + "\n";
+        }
+        return str;
     }
 }

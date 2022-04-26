@@ -578,7 +578,6 @@ public final class Interpreter
     }
 
 
-    /*
     private List<BoundedPair> succeed(List<BoundedPair> bindings, Stack<ExecutionState> backtrack) {
         BacktrackStorage = backtrack;
         return bindings;
@@ -589,11 +588,45 @@ public final class Interpreter
         satisfy(backtrack, state.getBindings(), state.getRules(), state.getGoals());
     }
 
-    private void tryRule(Stack<ExecutionState> backtrack, List<BoundedPair> bindings,
-                         List<Rule> rules, List<QueryArgNode> goals) {
+    private List<BoundedPair> unify(QueryArgNode goal, Rule rule, List<BoundedPair> bindings) {
+        int size = goal.arity;
+        HashMap<Integer, StringLiteralNode> terms = goal.terms;
+        HashMap<Integer, String> logic_vars = goal.logic_var;
+        List<StringLiteralNode> rule_args = rule.get_head_args();
 
+        if (rule.is_fact()) {
+            for (int i = 0; i < size; i++) {
+                if (terms.containsKey(i)) {
+                    if (! terms.get(i).value.equals(rule_args.get(i).value)) {
+                        return null;
+                    }
+                }
+                else if (logic_vars.containsKey(i)) {
+                    bindings.add(new BoundedPair(logic_vars.get(i), rule_args.get(i).value));
+                }
+            }
+        }
+        return bindings;
     }
-    */
+
+    private List<BoundedPair> tryRule(Stack<ExecutionState> backtrack, List<BoundedPair> bindings,
+                         List<Rule> rules, List<QueryArgNode> goals) {
+        QueryArgNode goal = goals.get(0);
+        List<BoundedPair> new_bindings = bindings;
+        for(int i = 0; i < rules.size(); i++) {
+            Rule rule = rules.get(i);
+
+            if (rule.arity.equals(goal.arity) && rule.head.equals(goal.name)) {
+                List<BoundedPair> uni = unify(goal, rule, new_bindings);
+                if (uni != null) {
+                    new_bindings = uni;
+                }
+            }
+        }
+        System.out.println(bindings);
+        return bindings;
+    }
+
 
     /**
      * @param backtrack : Stack of execution states
@@ -603,7 +636,7 @@ public final class Interpreter
      *
      * @return A List of bindings that satisfies the query
      */
-    /*
+
     private List<BoundedPair> satisfy(Stack<ExecutionState> backtrack, List<BoundedPair> bindings,
                          List<Rule> rules, List<QueryArgNode> goals) {
         // 1: All goals solved: solution found.
@@ -617,7 +650,7 @@ public final class Interpreter
         else {tryRule(backtrack, bindings, rules, goals);}
         return bindings;
     }
-    */
+
 
     /**
      * Take the name of a goal and return a list of rules which have
@@ -630,29 +663,30 @@ public final class Interpreter
     }
 
     private boolean query (QueryNode node) {
-        QueryArgNode query_goals = node.getQueryArgs();
+        List<QueryArgNode> query_goals = node.getQueryArgs();
         List<Rule> query_rules = new ArrayList<Rule>();
-        List<Rule> rules = rules_for(query_goals.name);
-        if (rules != null) {
-            query_rules.addAll(rules);
+
+        for (int i = 0; i < query_goals.size(); i++) {
+            List<Rule> rules = rules_for(query_goals.get(i).name);
+            if (rules != null) {
+                query_rules.addAll(rules);
+            }
         }
-        if (query_rules.isEmpty()) {return false;}
+
+        if (query_rules.isEmpty()) {
+            System.out.println("false");
+            return false;
+        }
 
         List<BoundedPair> bindings = new ArrayList<BoundedPair>();
         Stack<ExecutionState> backtrack = new Stack<ExecutionState>();
-        //List<BoundedPair> result = satisfy(backtrack, bindings, query_rules, query_goals);
-        for (int i = 0; i < query_rules.size(); i++) {
-            Rule r = query_rules.get(i);
-            if(r.fact) {
-                Boolean bool = true;
-                List<StringLiteralNode> rule_args = r.get_args();
-                List<StringLiteralNode> query_args = query_goals.getTermsAsList();
-                for(int j = 0; j < rule_args.size(); j++) {
-                    if(!(rule_args.get(j).getValue().equals(query_args.get(j).getValue()))) {bool = false;}
-                } if(bool) {return true;}
-            }
+        List<BoundedPair> result = satisfy(backtrack, bindings, query_rules, query_goals);
+        if (result != null) {
+            System.out.println("true");
         }
+        else {System.out.println("false");};
         return false;
+
     }
 
     private Void rule (RuleDeclarationNode node) {

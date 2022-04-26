@@ -18,6 +18,7 @@ public class Rule {
     public final List<TailNode> tails;
     public final List<String> logic_operands;
     public final Boolean fact;
+    public final Integer arity;
 
 
     @SuppressWarnings("unchecked")
@@ -25,6 +26,7 @@ public class Rule {
         this.fact = fact;
         this.head = Util.cast(head, String.class);
         this.head_args = Util.cast(head_args, List.class);
+        this.arity = this.head_args.size();
         if(!fact) {
             this.tails = Util.cast(tails, List.class);
             this.logic_operands = (List<String>) logic_operands;
@@ -35,8 +37,12 @@ public class Rule {
         }
     }
 
-    public List<StringLiteralNode> get_args(){
+    public List<StringLiteralNode> get_head_args(){
         return head_args;
+    }
+
+    public Boolean is_fact() {
+        return fact;
     }
 
     @Override

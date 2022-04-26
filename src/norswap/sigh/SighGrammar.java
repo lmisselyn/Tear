@@ -271,7 +271,7 @@ public class SighGrammar extends Grammar
         .as_list(QueryArgNode.class);  // Prendre que des "," comme "ou" pour le moment ?
 
     public rule query =
-        seq(_query, LPAREN, query_arg, RPAREN)
+        seq(_query, LPAREN, query_args, RPAREN)
         .push($ -> new QueryNode($.span(), $.$[0]));
 
     //------------------------------------------------------------------------------

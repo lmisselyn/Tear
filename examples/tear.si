@@ -2,6 +2,7 @@ fun main (args: String) {
     tear {
         man("Thomas").
         man("Lambert").
+        man("Paul").
         father("Paul", "Harry").
         father("Pierre", "Louis").
         father(Paul, Marie) := child(Marie, Paul).
@@ -12,15 +13,12 @@ fun main (args: String) {
         // "Soleil".  // C'est possible de declarer juste ça.
     }
 
-    var test1: Bool = query(woman("Bill"))
-    var test2: Bool = query(father("Paul", "Harry"))
-    var test3: Bool = query(man("Lambert"))
-    var test4: Bool = query(man("Paul"))
+    //var test1: Bool = query(woman("Bill"))
+    //var test2: Bool = query(father("Paul", "Harry"))
+    //var test3: Bool = query(man("Lambert"))
+    //var test4: Bool = query(man("Paul"))
 
-    print(test1)
-    print(test2)
-    print(test3)
-    print(test4)
+    var test5: Bool = query(man(X))
 
 }
 
