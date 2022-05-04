@@ -1,4 +1,5 @@
 package norswap.sigh.interpreter;
+import norswap.sigh.ast.QueryArgNode;
 import norswap.sigh.ast.StringLiteralNode;
 import norswap.sigh.ast.TailNode;
 import norswap.utils.Util;
@@ -15,7 +16,7 @@ import java.util.Set;
 public class Rule {
     public final String head;
     public final List<StringLiteralNode> head_args;
-    public final List<TailNode> tails;
+    public final List<QueryArgNode> tails;
     public final List<String> logic_operands;
     public final Boolean fact;
     public final Integer arity;

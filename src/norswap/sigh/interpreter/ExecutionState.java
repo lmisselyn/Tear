@@ -16,9 +16,9 @@ import java.util.Objects;
 public class ExecutionState {
     private List<QueryArgNode> goals;
     private List<Rule> rules;
-    private List<BoundedPair> bindings;
+    private List<List<BoundedPair>> bindings;
 
-    public ExecutionState(List<QueryArgNode> goals, List<Rule> rules, List<BoundedPair> bindings) {
+    public ExecutionState(List<QueryArgNode> goals, List<Rule> rules, List<List<BoundedPair>> bindings) {
         this.goals = goals;
         this.rules = rules;
         this.bindings = bindings;
@@ -32,7 +32,7 @@ public class ExecutionState {
         return rules;
     }
 
-    public List<BoundedPair> getBindings() {
+    public List<List<BoundedPair>> getBindings() {
         return bindings;
     }
 

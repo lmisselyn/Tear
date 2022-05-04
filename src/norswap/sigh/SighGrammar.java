@@ -235,8 +235,12 @@ public class SighGrammar extends Grammar
             choice(logic_or, logic_and)
                     .push($ -> $.str());
 
+    public rule query_arg =
+            seq(identifier, LPAREN, terms_n_logic_var, RPAREN)
+                    .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]));
+
     public rule tails =
-        choice(seq(tail, usual_whitespace, logic_operand), tail).sep(1, usual_whitespace)
+        choice(seq(query_arg, usual_whitespace, logic_operand), query_arg).sep(1, usual_whitespace)
         .as_list(Object.class);
 
     public rule fact_declaration =
@@ -262,9 +266,6 @@ public class SighGrammar extends Grammar
     public rule tear_expression =
         seq(_tear, tear_block);
 
-    public rule query_arg =
-        seq(identifier, LPAREN, terms_n_logic_var, RPAREN)
-                .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]));
 
     public rule query_args =
         query_arg.sep(0, COMMA) // On peut faire une query d'un truc vide ? Argument à 0 ça accepte ça pour le moment.

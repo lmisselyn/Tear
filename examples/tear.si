@@ -3,9 +3,11 @@ fun main (args: String) {
         man("Thomas").
         man("Lambert").
         man("Paul").
+        man("Vincent").
         father("Paul", "Harry").
         father("Pierre", "Louis").
-        father(Paul, Marie) := child(Marie, Paul).
+        child("Lambert", "Vincent").
+        father(P, C) := child(C, P) AND man(P).
 
         weekend("saturday").
         sunny_day("monday").
@@ -13,12 +15,13 @@ fun main (args: String) {
         // "Soleil".  // C'est possible de declarer juste ça.
     }
 
-    //var test1: Bool = query(woman("Bill"))
+    var test1: Bool = query(woman("Bill"))
     //var test2: Bool = query(father("Paul", "Harry"))
     //var test3: Bool = query(man("Lambert"))
-    //var test4: Bool = query(man("Paul"))
 
     var test5: Bool = query(man(X))
+    var test4: Bool = query(man("Paul"))
+    var test6: Bool = query(father(X, Y))
 
 }
 

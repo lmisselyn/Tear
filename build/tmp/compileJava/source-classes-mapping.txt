@@ -1,5 +1,5 @@
-norswap/sigh/SemanticAnalysis.java
- norswap.sigh.SemanticAnalysis
+norswap/sigh/ast/RuleDeclarationNode.java
+ norswap.sigh.ast.RuleDeclarationNode
 norswap/sigh/ast/UnaryOperator.java
  norswap.sigh.ast.UnaryOperator
 norswap/sigh/ast/FieldAccessNode.java
@@ -22,8 +22,8 @@ norswap/sigh/types/StructType.java
  norswap.sigh.types.StructType
 norswap/sigh/bytecode/AsmUtils.java
  norswap.sigh.bytecode.AsmUtils
-norswap/sigh/types/StringType.java
- norswap.sigh.types.StringType
+norswap/sigh/ast/ArrayAccessNode.java
+ norswap.sigh.ast.ArrayAccessNode
 norswap/sigh/ast/IntLiteralNode.java
  norswap.sigh.ast.IntLiteralNode
 norswap/sigh/ast/BinaryExpressionNode.java
@@ -47,8 +47,8 @@ norswap/sigh/types/BoolType.java
  norswap.sigh.types.BoolType
 norswap/sigh/ast/FieldDeclarationNode.java
  norswap.sigh.ast.FieldDeclarationNode
-norswap/sigh/ast/RuleDeclarationNode.java
- norswap.sigh.ast.RuleDeclarationNode
+norswap/sigh/SighGrammar.java
+ norswap.sigh.SighGrammar
 norswap/sigh/interpreter/Constructor.java
  norswap.sigh.interpreter.Constructor
 norswap/sigh/scopes/RootScope.java
@@ -83,12 +83,12 @@ norswap/sigh/interpreter/Fact.java
  norswap.sigh.interpreter.Fact
 norswap/sigh/bytecode/TypeUtils.java
  norswap.sigh.bytecode.TypeUtils
-norswap/sigh/ast/ArrayAccessNode.java
- norswap.sigh.ast.ArrayAccessNode
+norswap/sigh/interpreter/RuleStorage.java
+ norswap.sigh.interpreter.RuleStorage
 norswap/sigh/interpreter/ExecutionState.java
  norswap.sigh.interpreter.ExecutionState
-norswap/sigh/SighGrammar.java
- norswap.sigh.SighGrammar
+norswap/sigh/SemanticAnalysis.java
+ norswap.sigh.SemanticAnalysis
 norswap/sigh/types/NullType.java
  norswap.sigh.types.NullType
 norswap/sigh/interpreter/BoundedPair.java
@@ -109,14 +109,14 @@ norswap/sigh/ast/BinaryOperator.java
  norswap.sigh.ast.BinaryOperator
 norswap/sigh/types/FactType.java
  norswap.sigh.types.FactType
-norswap/sigh/types/ArrayType.java
- norswap.sigh.types.ArrayType
+norswap/sigh/types/StringType.java
+ norswap.sigh.types.StringType
 norswap/sigh/ast/ExpressionStatementNode.java
  norswap.sigh.ast.ExpressionStatementNode
 norswap/sigh/ast/TypeNode.java
  norswap.sigh.ast.TypeNode
-norswap/sigh/ast/ArrayTypeNode.java
- norswap.sigh.ast.ArrayTypeNode
+norswap/sigh/interpreter/Rule.java
+ norswap.sigh.interpreter.Rule
 norswap/sigh/ast/AssignmentNode.java
  norswap.sigh.ast.AssignmentNode
 norswap/sigh/ast/ArrayLiteralNode.java
@@ -151,15 +151,17 @@ norswap/sigh/ast/StatementNode.java
  norswap.sigh.ast.StatementNode
 norswap/sigh/bytecode/Null.java
  norswap.sigh.bytecode.Null
-norswap/sigh/interpreter/RuleStorage.java
- norswap.sigh.interpreter.RuleStorage
-norswap/sigh/interpreter/Rule.java
- norswap.sigh.interpreter.Rule
+norswap/sigh/types/ArrayType.java
+ norswap.sigh.types.ArrayType
+norswap/sigh/ast/ArrayTypeNode.java
+ norswap.sigh.ast.ArrayTypeNode
 norswap/sigh/SighRunner.java
  norswap.sigh.SighRunner
+norswap/sigh/Test.java
+ norswap.sigh.Test
 norswap/sigh/interpreter/Interpreter.java
  norswap.sigh.interpreter.Interpreter
  norswap.sigh.interpreter.Interpreter$1
  norswap.sigh.interpreter.Interpreter$Return
-norswap/sigh/Test.java
- norswap.sigh.Test
+norswap/sigh/interpreter/QuerySolver.java
+ norswap.sigh.interpreter.QuerySolver
