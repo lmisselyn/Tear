@@ -22,23 +22,26 @@ public class QuerySolver {
         this.final_bindings = new ArrayList<>();
     }
 
-    public Boolean solve(QueryNode node) {
+    public Pair solve(QueryNode node) {
         List<QueryArgNode> query_goals = new ArrayList<>(node.getQueryArgs());
         List<Rule> rules = rules_for(query_goals.get(0).name);
 
         if (rules == null) {
-            System.out.println("false");
-            return false;
+            //System.out.println("false");
+            return new Pair(false, null);
         }
         List<List<BoundedPair>> bindings = new ArrayList<>();
         Stack<ExecutionState> backtrack = new Stack<ExecutionState>();
         List<List<BoundedPair>> result = satisfy(backtrack, bindings, rules, query_goals);
-        System.out.println(result);
+        //System.out.println(result);
         if (result != null) {
-            System.out.println("true");
+            //System.out.println("true");
+            return new Pair(true, result);
         }
-        else {System.out.println("false");};
-        return false;
+        else {
+            //System.out.println("false");
+            return new Pair(false, null);
+        }
     }
 
     /**

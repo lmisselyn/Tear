@@ -577,9 +577,36 @@ public final class Interpreter
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private boolean query (QueryNode node) {
         QuerySolver query_solver = new QuerySolver(ruleStorage);
-        return query_solver.solve(node);
+        Pair sol = query_solver.solve(node); // Boolean, List<List<BoundedPair>>
+        List<List<BoundedPair>> solBoundedList = (List<List<BoundedPair>>) sol.getArity();
+        System.out.println(solBoundedList);
+        // [[(X, Paul), (Y, Harry)], [(X, Pierre), (Y, Louis)], [(C, Lambert), (P, Vincent)]]
+        if (solBoundedList != null) {
+            HashMap<String, String[]> assi = new HashMap<>();
+            for (int i = 0; i < solBoundedList.size(); i++) {
+                for (int j = 0; j < solBoundedList.get(i).size(); j++) {
+//                    System.out.println(solBoundedList.get(i).get(j).getLogicVar()); // Actuellement un bug qui fait que C est dans les BoundedPair retournée ?
+
+                    if (i==0) {
+                        String[] stringSol = new String[solBoundedList.size()];
+                        stringSol[0] = solBoundedList.get(i).get(j).getTerm();
+                        assi.put(solBoundedList.get(i).get(j).getLogicVar(), stringSol);
+                    } else {
+                        assi.get(solBoundedList.get(i).get(j).getLogicVar())[i] = solBoundedList.get(i).get(j).getTerm();
+                    }
+                }
+            }
+
+            Scope scope = reactor.get(node, "scope");
+            for (int i = 0; i < assi.keySet().toArray().length; i++) {
+                String key = (String) assi.keySet().toArray()[i];
+                assign(scope, key , assi.get(key), reactor.get(node.queryArgs, "type"));
+            }
+        }
+        return Util.cast(sol.getName(), Boolean.class);
     }
 
     private Void rule (RuleDeclarationNode node) {

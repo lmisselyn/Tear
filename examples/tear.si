@@ -7,7 +7,7 @@ fun main (args: String) {
         father("Paul", "Harry").
         father("Pierre", "Louis").
         child("Lambert", "Vincent").
-        father(P, C) := child(C, P) AND man(P).
+        // father(P, C) := child(C, P) AND man(P).
 
         weekend("saturday").
         sunny_day("monday").
@@ -16,13 +16,55 @@ fun main (args: String) {
     }
 
     var test1: Bool = query(woman("Bill"))
+    if (test1)
+        print("woman(Bill) -> True")
+    else
+        print("woman(Bill) -> False")
+    print("=================")
+
     //var test2: Bool = query(father("Paul", "Harry"))
     //var test3: Bool = query(man("Lambert"))
 
-    var test5: Bool = query(man(X))
-    var test4: Bool = query(man("Paul"))
-    var test6: Bool = query(father(X, Y))
+    var X: String[] = []
+    array_print(X)
+    var test4: Bool = query(man(X))
+    if (test4)
+        print("man(X) -> True")
+    else
+        print("man(X) -> False")
+    array_print(X)
+    print("================")
 
+    var test5: Bool = query(man("Paul"))
+    if (test5)
+        print("man(Paul) -> True")
+    else
+        print("man(Paul) -> False")
+    print("=============")
+
+    var X: String[] = []
+    var Y: String[] = []
+    var test6: Bool = query(father(X, Y))
+    if (test6)
+        print("father(X, Y) -> True")
+    else
+        print("father(X, Y) -> False")
+    print("X:")
+    array_print(X)
+    print("Y:")
+    array_print(Y)
+    print("=================")
+
+}
+
+fun array_print (a: String[]): Int
+{
+    var i: Int = 0
+    while i < a.length {
+        print(a[i])
+        i = i + 1
+    }
+    return 0
 }
 
 main("")

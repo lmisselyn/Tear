@@ -8,19 +8,19 @@ import java.util.Objects;
     @arity is the number of terms in a fact
  */
 public class Pair {
-    private String name;
-    private Integer arity;
+    private Object name;
+    private Object arity;
 
-    public Pair(String name, Integer arity) {
+    public Pair(Object name, Object arity) {
         this.name = name;
         this.arity = arity;
     }
 
-    public Integer getArity() {
+    public Object getArity() {
         return arity;
     }
 
-    public String getName() {
+    public Object getName() {
         return name;
     }
 

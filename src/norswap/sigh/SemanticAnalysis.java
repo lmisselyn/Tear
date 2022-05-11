@@ -445,14 +445,32 @@ public final class SemanticAnalysis
 
     private void query (QueryNode node)
     {
-        this.inferenceContext = node;
+//        this.inferenceContext = node;
+//        Attribute[] dependencies = new Attribute[1];
+//        dependencies[0] = node.attr("type");
+//        R.rule(node, "type")
+//                .by(r -> {
+//                    r.set(0, BoolType.INSTANCE);});
+        final Scope scope = this.scope;
+        DeclarationContext maybeCtx = scope.lookup(node.getQueryArgs().get(0).logic_var.get(0));
+//        this.inferenceContext = node;
+        R.set(node, "scope", scope);
 
-        Attribute[] dependencies = new Attribute[1];
+
+        Attribute[] dependencies = new Attribute[node.getQueryArgs().size() + 1];
         dependencies[0] = node.attr("type");
+        forEachIndexed(node.getQueryArgs(), (i, arg) -> {
+            dependencies[i + 1] = arg.attr("type");
+            R.set(arg, "index", i);
+        });
 
         R.rule(node, "type")
+                .using(dependencies)
                 .by(r -> {
-                    r.set(0, BoolType.INSTANCE);});
+                    r.set(0, BoolType.INSTANCE);
+
+                    List<QueryArgNode> args = node.queryArgs;
+                });
     }
 
     private void queryArg (QueryArgNode node) {
