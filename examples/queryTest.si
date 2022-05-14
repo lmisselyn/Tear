@@ -1,0 +1,42 @@
+fun main (args: String) {
+    tear {
+
+        //man("Lambert").
+        //man("Paul").
+        man("Jean").
+        man("Thomas").
+        man("Vincent").
+        father("Paul", "Harry").
+        father("Pierre", "Louis").
+        child("Lambert", "Vincent").
+        child("Michel", "Jean").
+        father(P, C) := child(C, P) AND man(P).
+        friendly("Thomas").
+        friendly("Vincent").
+        big("Vincent").
+        weekend("saturday").
+        sunny_day("monday").
+        good_day(Z) := weekend(Z) OR sunny_day(Z) AND ok(Z).
+        // "Soleil".  // C'est possible de declarer juste ça.
+    }
+
+
+    var test1: Bool = query(father(X, "Harry"))
+
+    if (test1)
+        print("man(Paul) -> True")
+    else
+        print("man(Paul) -> False")
+}
+
+fun array_print (a: String[]): Int
+{
+    var i: Int = 0
+    while i < a.length {
+        print(a[i])
+        i = i + 1
+    }
+    return 0
+}
+
+main("")

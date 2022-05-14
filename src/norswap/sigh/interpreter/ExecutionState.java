@@ -14,17 +14,17 @@ import java.util.Objects;
  *
  */
 public class ExecutionState {
-    private List<QueryArgNode> goals;
+    private List<QueryArg> goals;
     private List<Rule> rules;
     private List<List<BoundedPair>> bindings;
 
-    public ExecutionState(List<QueryArgNode> goals, List<Rule> rules, List<List<BoundedPair>> bindings) {
+    public ExecutionState(List<QueryArg> goals, List<Rule> rules, List<List<BoundedPair>> bindings) {
         this.goals = goals;
         this.rules = rules;
         this.bindings = bindings;
     }
 
-    public List<QueryArgNode> getGoals() {
+    public List<QueryArg> getGoals() {
         return goals;
     }
 

@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class Rule {
     public final String head;
-    public final List<StringLiteralNode> head_args;
+    public final List<Object> head_args;
     public final List<QueryArgNode> tails;
     public final List<String> logic_operands;
     public final Boolean fact;
@@ -38,7 +38,7 @@ public class Rule {
         }
     }
 
-    public List<StringLiteralNode> get_head_args(){
+    public List<Object> get_head_args(){
         return head_args;
     }
 
