@@ -16,31 +16,50 @@ public class QuerySolver {
     RuleStorage ruleStorage;
     private List<ExecutionState> BacktrackStorage;
     private List<List<BoundedPair>> final_bindings;
+    private List<QueryArg> main_goals;
+    private List<BoundedPair> var_to_var;
+
     public QuerySolver(RuleStorage ruleStorage) {
         this.ruleStorage = ruleStorage;
         this.BacktrackStorage = new ArrayList<>();
         this.final_bindings = new ArrayList<>();
+        this.main_goals = new ArrayList<>();
+        this.var_to_var = new ArrayList<>();
     }
 
     public Pair solve(QueryNode node) {
         List<QueryArg> query_goals = get_queryArgs(node.getQueryArgs());
+        main_goals.addAll(query_goals);
         List<Rule> rules = rules_for(query_goals.get(0).name);
 
         if (rules == null) {
-            //System.out.println("false");
+
             return new Pair(false, null);
         }
         List<List<BoundedPair>> bindings = new ArrayList<>();
         Stack<ExecutionState> backtrack = new Stack<ExecutionState>();
         List<List<BoundedPair>> result = satisfy(backtrack, bindings, rules, query_goals);
-        //System.out.println(result);
+
+
         if (result != null) {
-            //System.out.println("true");
+            link_var_to_var(result);
             return new Pair(true, result);
         }
         else {
-            //System.out.println("false");
+
             return new Pair(false, null);
+        }
+    }
+
+    private void link_var_to_var(List<List<BoundedPair>> bindings) {
+        for (List<BoundedPair> binding : bindings) {
+            for (BoundedPair bd : binding) {
+                for (BoundedPair var_bd : var_to_var) {
+                    if (bd.getLogicVar().equals(var_bd.getTerm())) {
+                        bd.changeLogicVar(var_bd.getLogicVar());
+                    }
+                }
+            }
         }
     }
 
@@ -72,7 +91,7 @@ public class QuerySolver {
         // 2: No more rules for first goal, backtrack to last choice point, or fail.
         // 3: Try the next rule for the current goal.
         if (goals.isEmpty()) {
-            if (bindings != null) {store_result(bindings);}
+            if (!bindings.isEmpty()) {store_result(bindings);}
             if (! backtrack.isEmpty()) {
                 ExecutionState state = backtrack.elementAt(0);
                 List<List<BoundedPair>> next = satisfy(new Stack<ExecutionState>(), new ArrayList<>(), state.getRules(), state.getGoals());
@@ -81,10 +100,11 @@ public class QuerySolver {
         }
         else if (rules.isEmpty()) {
             if (backtrack.isEmpty()) {return null;}
-            else {doBacktrack(backtrack);}
+            else {return doBacktrack(backtrack);}
         }
-        else {tryRule(backtrack, bindings, rules, goals);}
-        return final_bindings;
+        else {
+            return tryRule(backtrack, bindings, rules, goals);
+        }
     }
 
 
@@ -93,19 +113,18 @@ public class QuerySolver {
         return bindings;
     }
 
-    private void doBacktrack(Stack<ExecutionState> backtrack) {
+    private List<List<BoundedPair>> doBacktrack(Stack<ExecutionState> backtrack) {
         ExecutionState state = backtrack.pop();
         if (!state.getBindings().isEmpty()) {
             state.getBindings().remove(state.getBindings().size()-1);
         }
-        satisfy(backtrack, state.getBindings(), state.getRules(), state.getGoals());
+        return satisfy(backtrack, state.getBindings(), state.getRules(), state.getGoals());
     }
 
     private List<List<BoundedPair>> tryRule(Stack<ExecutionState> backtrack, List<List<BoundedPair>> bindings,
                                             List<Rule> rules, List<QueryArg> goals) {
         QueryArg goal = goals.get(0);
         List<List<BoundedPair>> new_bindings = bindings;
-        System.out.println(bindings);
 
         Rule rule = rules.get(0);
         if (rule.arity.equals(goal.arity) && rule.head.equals(goal.name)) {
@@ -168,7 +187,9 @@ public class QuerySolver {
                     tmp.add(new BoundedPair(logic_vars.get(i), ((StringLiteralNode) rule_args.get(i)).value));
                 }
             }
-            bindings.add(tmp);
+            if (!tmp.isEmpty()) {
+                bindings.add(tmp);
+            }
         }
         else {
             //On part du principe que toutes les variables sont différentes.
@@ -189,10 +210,21 @@ public class QuerySolver {
             List<List<BoundedPair>> tail_bindings = new ArrayList<>();
             Stack<ExecutionState> tail_backtrack = new Stack<ExecutionState>();
             List<List<BoundedPair>> bindings_for_this_rule = satisfy(tail_backtrack, tail_bindings, tail_rules, tail_goals);
+
             if (bindings_for_this_rule != null) {
+                for (QueryArg main_goal : main_goals) {
+                    if (main_goal.name.equals(rule.head) && main_goal.arity == rule.arity) {
+                        for (int i =0; i< rule.arity; i++) {
+                            var_to_var.add(new BoundedPair((String) main_goal.arg_list.get(i), (String) rule_args.get(i)));
+                        }
+                    }
+                }
+            } else {return null;}
+            /*
                 bindings.add(get_true_bindings(bindings_for_this_rule));
                 //bindings.addAll(bindings_for_this_rule);
             } else {return null;}
+             */
         }
         return bindings;
     }

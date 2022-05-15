@@ -26,6 +26,10 @@ public class BoundedPair {
         return logic_var;
     }
 
+    public void changeLogicVar(String new_var) {
+        this.logic_var = new_var;
+    }
+
     @Override
     public String toString() {
         return "(" + logic_var + ", " + term + ")";
