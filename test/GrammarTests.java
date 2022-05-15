@@ -153,4 +153,46 @@ public class GrammarTests extends AutumnTestFixture {
                 new StringLiteralNode(null, "Harry"),
                 new StringLiteralNode(null, "Paul"))));
     }
+
+    @Test
+    public void testTearRule () {
+        rule = grammar.rule_declaration;
+
+        successExpect("father(Paul, Marie) := child(Marie, Paul). ",
+                new RuleDeclarationNode(
+                        null,
+                        "father",
+                        asList("Paul", "Marie"),
+                        asList(new QueryArgNode(null, "child",
+                                asList("Marie", "Paul")))));
+
+        successExpect("good_day(Z) := weekend(Z) OR sunny_day(Z) AND ok(Z). ",
+                new RuleDeclarationNode(
+                        null,
+                        "good_day",
+                        asList("Z"),
+                        asList(
+                                new QueryArgNode(null, "weekend", asList("Z")),
+                                "OR",
+                                new QueryArgNode(null, "sunny_day", asList("Z")),
+                                "AND",
+                                new QueryArgNode(null, "ok", asList("Z"))
+                        )
+                ));
+    }
+
+    @Test
+    public void testTearQuery() {
+        rule = grammar.query;
+
+        successExpect("query(woman(\"Bill\"))",
+                new QueryNode(null,
+                        asList(new QueryArgNode(null, "woman", asList(new StringLiteralNode(null, "Bill"))))
+                ));
+
+        successExpect("query(man(X))",
+                new QueryNode(null,
+                        asList(new QueryArgNode(null, "man", asList("X")))
+                ));
+    }
 }

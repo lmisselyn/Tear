@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="InterpreterTests" tests="11" skipped="0" failures="0" errors="0" timestamp="2022-04-19T11:07:16" hostname="lambert-hp-spectre" time="0.126">
+<testsuite name="InterpreterTests" tests="12" skipped="0" failures="1" errors="0" timestamp="2022-05-15T09:03:55" hostname="HP-Pavilion" time="0.164">
   <properties/>
-  <testcase name="testArrayStructAccess" classname="InterpreterTests" time="0.028"/>
-  <testcase name="testCalls" classname="InterpreterTests" time="0.006"/>
-  <testcase name="testIfWhile" classname="InterpreterTests" time="0.008"/>
-  <testcase name="testInference" classname="InterpreterTests" time="0.004"/>
-  <testcase name="testLiteralsAndUnary" classname="InterpreterTests" time="0.01"/>
-  <testcase name="testNumericBinary" classname="InterpreterTests" time="0.026"/>
-  <testcase name="testOtherBinary" classname="InterpreterTests" time="0.026"/>
-  <testcase name="testRootAndBlock" classname="InterpreterTests" time="0.007"/>
-  <testcase name="testTypeAsValues" classname="InterpreterTests" time="0.003"/>
-  <testcase name="testUnconditionalReturn" classname="InterpreterTests" time="0.001"/>
+  <testcase name="testArrayStructAccess" classname="InterpreterTests" time="0.035"/>
+  <testcase name="testCalls" classname="InterpreterTests" time="0.009"/>
+  <testcase name="testIfWhile" classname="InterpreterTests" time="0.011"/>
+  <testcase name="testInference" classname="InterpreterTests" time="0.006"/>
+  <testcase name="testLiteralsAndUnary" classname="InterpreterTests" time="0.013"/>
+  <testcase name="testNumericBinary" classname="InterpreterTests" time="0.032"/>
+  <testcase name="testOtherBinary" classname="InterpreterTests" time="0.025"/>
+  <testcase name="testQueryReturn" classname="InterpreterTests" time="0.012">
+    <failure message="java.lang.AssertionError: &#10;expected [false] but found [true]" type="java.lang.AssertionError">java.lang.AssertionError: 
+expected [false] but found [true]
+	at InterpreterTests.check(InterpreterTests.java:85)
+	at InterpreterTests.check(InterpreterTests.java:46)
+	at InterpreterTests.testQueryReturn(InterpreterTests.java:380)
+</failure>
+  </testcase>
+  <testcase name="testRootAndBlock" classname="InterpreterTests" time="0.008"/>
+  <testcase name="testTypeAsValues" classname="InterpreterTests" time="0.002"/>
+  <testcase name="testUnconditionalReturn" classname="InterpreterTests" time="0.002"/>
   <testcase name="testVarDecl" classname="InterpreterTests" time="0.005"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

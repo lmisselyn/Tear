@@ -351,4 +351,40 @@ public final class InterpreterTests extends TestFixture {
     // ---------------------------------------------------------------------------------------------
 
     // NOTE(norswap): Not incredibly complete, but should cover the basics.
+
+    ////// OUR TESTS ////////
+    // checkThrows("code", NullPointerException.class)
+    // check("code", returned result, printed output)
+    // check_Expr("code", result)
+    @Test public void testQueryReturn()
+    {
+        rule = grammar.root;
+        String tearDeclaration = "tear {"+
+                "   man(\"Thomas\")."+
+                "   man(\"Lambert\")."+
+                "   man(\"Paul\")." +
+                "}";
+
+        check(tearDeclaration +
+                        "var X: String[] = [];" +
+                        "var test4: Bool = query(man(X));" +
+                        "return X;"
+                , new Object[]{"Thomas", "Lambert", "Paul"});
+
+        check(tearDeclaration +
+                        "var X: String[] = [];" +
+                        "var test4: Bool = query(man(X));" +
+                        "return test4;"
+                , true);
+
+        check(tearDeclaration +
+                        "var test4: Bool = query(man(\"Carl\"));" +
+                        "return test4;"
+                , false);
+
+        check(tearDeclaration +
+                        "var test4: Bool = query(woman(\"Thomas\"));" +
+                        "return test4;"
+                , false);
+    }
 }
