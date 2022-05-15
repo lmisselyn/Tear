@@ -15,21 +15,31 @@ fun main (args: String) {
 
         man(Z) := not_girl(Z).
         father(P, C) := child(C, P) AND man(P).
-        father(A, B) := child(B, A) AND not_girl(A).
+        //father(A, B) := child(B, A) AND not_girl(A).
     }
 
-    var test1: Bool = query(woman("Bill"))
+    var test1: Bool = query(woman("Paul"))
     if (test1)
-        print("woman(Bill) -> True")
+        print("woman(Paul) -> True")
     else
-        print("woman(Bill) -> False")
+        print("woman(Paul) -> False")
     print("=================")
 
-    //var test2: Bool = query(father("Paul", "Harry"))
-    //var test3: Bool = query(man("Lambert"))
+    var test2: Bool = query(man("Paul"))
+    if (test2)
+        print("man(Paul) -> True")
+    else
+        print("man(Paul) -> False")
+    print("=============")
+
+    var test3: Bool = query(man("Charles"))
+    if (test3)
+        print("man(Charles) -> True")
+    else
+        print("man(Charles) -> False")
+    print("=============")
 
     var X: String[] = []
-    array_print(X)
     var test4: Bool = query(man(X))
     if (test4)
         print("man(X) -> True")
@@ -38,17 +48,10 @@ fun main (args: String) {
     array_print(X)
     print("================")
 
-    var test5: Bool = query(man("Paul"))
-    if (test5)
-        print("man(Paul) -> True")
-    else
-        print("man(Paul) -> False")
-    print("=============")
-
     var X: String[] = []
     var Y: String[] = []
-    var test6: Bool = query(father(X, Y))
-    if (test6)
+    var test5: Bool = query(father(X, Y))
+    if (test5)
         print("father(X, Y) -> True")
     else
         print("father(X, Y) -> False")
@@ -62,6 +65,7 @@ fun main (args: String) {
 
 fun array_print (a: String[]): Int
 {
+    if (a.length == 0) print("[]")
     var i: Int = 0
     while i < a.length {
         print(a[i])

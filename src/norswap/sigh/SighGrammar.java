@@ -198,12 +198,12 @@ public class SighGrammar extends Grammar
     //-------------------OUR CHANGES---------------------------
 
     public rule upper_alpha =
-            choice('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-                    'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+        choice('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+            'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
     public rule logic_var =
-            seq(upper_alpha, id_part.at_least(0))
-                    .push($ -> $.str());
+        seq(upper_alpha, id_part.at_least(0))
+        .push($ -> $.str());
 
     public rule term =
         seq('"', string_content, '"')
@@ -214,8 +214,8 @@ public class SighGrammar extends Grammar
         .as_list(StringLiteralNode.class);
 
     public rule terms_n_logic_var =
-            choice(term, logic_var).sep(0, COMMA)
-                    .as_list(Object.class);
+        choice(term, logic_var).sep(0, COMMA)
+        .as_list(Object.class);
 
     public rule head_args =
         identifier.sep(0, COMMA)
@@ -226,18 +226,18 @@ public class SighGrammar extends Grammar
         .push($ -> new TailNode($.span(), $.$[0], $.$[1]));
 
     public rule logic_or =
-            seq(OR).push($ -> $.str());
+        seq(OR).push($ -> $.str());
 
     public rule logic_and =
-            seq(AND).push($ -> $.str());
+        seq(AND).push($ -> $.str());
 
     public rule logic_operand =
-            choice(logic_or, logic_and)
-                    .push($ -> $.str());
+        choice(logic_or, logic_and)
+        .push($ -> $.str());
 
     public rule query_arg =
-            seq(identifier, LPAREN, terms_n_logic_var, RPAREN)
-                    .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]));
+        seq(identifier, LPAREN, terms_n_logic_var, RPAREN)
+        .push($ -> new QueryArgNode($.span(), $.$[0], $.$[1]));
 
     public rule tails =
         choice(seq(query_arg, usual_whitespace, logic_operand), query_arg).sep(1, usual_whitespace)

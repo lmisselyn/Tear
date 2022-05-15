@@ -445,18 +445,10 @@ public final class SemanticAnalysis
 
     private void query (QueryNode node)
     {
-//        this.inferenceContext = node;
-//        Attribute[] dependencies = new Attribute[1];
-//        dependencies[0] = node.attr("type");
-//        R.rule(node, "type")
-//                .by(r -> {
-//                    r.set(0, BoolType.INSTANCE);});
         final Scope scope = this.scope;
-        DeclarationContext maybeCtx = scope.lookup(node.getQueryArgs().get(0).logic_var.get(0));
-//        this.inferenceContext = node;
         R.set(node, "scope", scope);
 
-
+        // Useless for the moment, should try to make it args.get(i).getTermsAsList().get(j) instead of args.get(i) and put the type there.
         Attribute[] dependencies = new Attribute[node.getQueryArgs().size() + 1];
         dependencies[0] = node.attr("type");
         forEachIndexed(node.getQueryArgs(), (i, arg) -> {
@@ -465,12 +457,18 @@ public final class SemanticAnalysis
         });
 
         R.rule(node, "type")
-                .using(dependencies)
-                .by(r -> {
-                    r.set(0, BoolType.INSTANCE);
+            .using(dependencies)
+            .by(r -> {
+                r.set(0, BoolType.INSTANCE);
 
-                    List<QueryArgNode> args = node.queryArgs;
-                });
+                List<QueryArgNode> args = node.getQueryArgs();
+                for (int i = 0; i < args.size(); i++) {
+                    for (int j = 0; j < args.get(i).getTermsAsList().size(); j++) {
+                        // There we could check if it's stringtype using before comment
+                        R.set(args.get(i).getTermsAsList().get(j), "type", StringType.INSTANCE);
+                    }
+                }
+            });
     }
 
     private void queryArg (QueryArgNode node) {

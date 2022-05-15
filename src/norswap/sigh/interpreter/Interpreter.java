@@ -536,41 +536,6 @@ public final class Interpreter
 
     // ---------------------------------------OUR CHANGES----------------------------------------------------
 
-    @SuppressWarnings("unchecked")
-    /*
-    private Void factDecl (FactDeclarationNode node) {
-        Pair pair = new Pair(node.name, node.getTerms().toArray().length);
-        if (!factStorage.contains(pair)) {
-            Set<Object> set;
-            if (pair.getArity() < 2) {
-                set = new HashSet<>();
-                set.add(node.getTerms().get(0).value);
-            } else {
-                set = new HashSet<>();
-                LinkedList<String> terms = new LinkedList<String>();
-                for (int i = 0; i < pair.getArity(); i++) {
-                    terms.add(node.getTerms().get(i).value);
-                }
-                set.add(terms);
-            }
-            factStorage.newFact(new Fact(node.name(), set, pair.getArity()));
-        } else {
-            Fact fact = factStorage.getFact(pair);
-            if (pair.getArity() < 2) {
-                fact.addTerm(node.getTerms().get(0).value);
-            } else {
-                LinkedList<String> terms = new LinkedList<String>();
-                for (int i = 0; i < pair.getArity(); i++) {
-                    terms.add(node.getTerms().get(i).value);
-                }
-                fact.addTerms(terms);
-            }
-        }
-        //System.out.println(factStorage);
-        return null;
-    }
-    */
-
     private Void factDecl (FactDeclarationNode node) {
         Rule rule = new Rule(node.name, node.getTerms(), null, null, true);
         ruleStorage.addRule(rule);
@@ -579,17 +544,15 @@ public final class Interpreter
 
     @SuppressWarnings("unchecked")
     private boolean query (QueryNode node) {
+        // Launch the class to solve the query with the current rule database
         QuerySolver query_solver = new QuerySolver(ruleStorage);
-        Pair sol = query_solver.solve(node); // Boolean, List<List<BoundedPair>>
-        List<List<BoundedPair>> solBoundedList = (List<List<BoundedPair>>) sol.getArity();
+        Pair sol = query_solver.solve(node);
+        List<List<BoundedPair>> solBoundedList = (List<List<BoundedPair>>) sol.getBounds();
         System.out.println(solBoundedList);
-        // [[(X, Paul), (Y, Harry)], [(X, Pierre), (Y, Louis)], [(C, Lambert), (P, Vincent)]]
         if (solBoundedList != null) {
             HashMap<String, String[]> assi = new HashMap<>();
             for (int i = 0; i < solBoundedList.size(); i++) {
                 for (int j = 0; j < solBoundedList.get(i).size(); j++) {
-//                    System.out.println(solBoundedList.get(i).get(j).getLogicVar()); // Actuellement un bug qui fait que C est dans les BoundedPair retournée ?
-
                     if (i==0) {
                         String[] stringSol = new String[solBoundedList.size()];
                         stringSol[0] = solBoundedList.get(i).get(j).getTerm();
@@ -606,13 +569,12 @@ public final class Interpreter
                 assign(scope, key , assi.get(key), reactor.get(node.queryArgs, "type"));
             }
         }
-        return Util.cast(sol.getName(), Boolean.class);
+        return Util.cast(sol.getSucceed(), Boolean.class);
     }
 
     private Void rule (RuleDeclarationNode node) {
         Rule rule = new Rule(node.head, node.getHead_args(), node.tails, node.logic_operand, false);
         ruleStorage.addRule(rule);
-        //System.out.println(ruleStorage);
         return null;
     }
 }

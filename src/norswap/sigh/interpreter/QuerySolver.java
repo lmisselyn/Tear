@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-
-
 public class QuerySolver {
 
     RuleStorage ruleStorage;
@@ -27,26 +25,29 @@ public class QuerySolver {
         this.var_to_var = new ArrayList<>();
     }
 
+    /**
+     * Return (Boolean, List<List<BoundedPair>>)
+     * The boolean is true if the query is true = A solution has been found for the query
+     * The List<List<BoundedPair>> represents a list of each combination of BoundedPair that makes a solution.
+     * A BoundedPair is a basically a variable name and its value.
+     */
     public Pair solve(QueryNode node) {
         List<QueryArg> query_goals = get_queryArgs(node.getQueryArgs());
         main_goals.addAll(query_goals);
         List<Rule> rules = rules_for(query_goals.get(0).name);
 
         if (rules == null) {
-
             return new Pair(false, null);
         }
         List<List<BoundedPair>> bindings = new ArrayList<>();
         Stack<ExecutionState> backtrack = new Stack<ExecutionState>();
         List<List<BoundedPair>> result = satisfy(backtrack, bindings, rules, query_goals);
 
-
         if (result != null) {
             link_var_to_var(result);
             return new Pair(true, result);
         }
         else {
-
             return new Pair(false, null);
         }
     }
@@ -107,7 +108,6 @@ public class QuerySolver {
         }
     }
 
-
     private List<List<BoundedPair>> succeed(List<List<BoundedPair>> bindings, Stack<ExecutionState> backtrack) {
         BacktrackStorage = backtrack;
         return bindings;
@@ -151,10 +151,9 @@ public class QuerySolver {
             return satisfy(backtrack, bindings, rules, goals);
         }
 
-        //on essaye une règle, et on ajoute les bidings pour cette règle.
-        //si la première règle échoue, on rappelle satisfy en retirant cette règle.
-        //si on a un résultat, on stocke l'état d'éxécution, et on rappelle satisfy avec le goal suivant
-
+        // We try a rule, and add the bindings for this rule.
+        // If the first rule fails, we call satisfy again while removing this precise rule.
+        // If we have a result, we store the running state, and call satisfy again with the next goal.
     }
 
     /**
@@ -168,7 +167,6 @@ public class QuerySolver {
      * @return The List of bindings enhanced with the bindings that
      * unify the goal and the rule
      */
-
     private List<List<BoundedPair>> unify(QueryArg goal, Rule rule, List<List<BoundedPair>> bindings) {
         int size = goal.arity;
         HashMap<Integer, String> terms = goal.terms;
@@ -192,10 +190,9 @@ public class QuerySolver {
             }
         }
         else {
-            //On part du principe que toutes les variables sont différentes.
-            //L'idée c'est de regarder dans les bidings si certaines variables présentes dans les
-            // goals sont déjà liées. On va alors modifier les goals en remplacant les variables par leur
-            //valeur
+            // We start from the principle that all the variables are differents.
+            // The idea is to watch in the bindings if some variables in the goals are already linked.
+            // We will then modify the goals by replacing the variables by their values.
             List<QueryArg> tail_goals = get_queryArgs(rule.tails);
 
             if (!terms.isEmpty()) {
@@ -220,6 +217,7 @@ public class QuerySolver {
                     }
                 }
             } else {return null;}
+            // TODO: Delete archives
             /*
                 bindings.add(get_true_bindings(bindings_for_this_rule));
                 //bindings.addAll(bindings_for_this_rule);
@@ -238,13 +236,17 @@ public class QuerySolver {
                     QueryArg curr_goal = new_goals.get(i);
                     HashMap<Integer, String> new_terms = new HashMap<>(curr_goal.terms);
                     HashMap<Integer, String> new_logic_var = new HashMap<>();
-                    if(curr_goal.logic_var.containsValue(curr_logic_var)) {
-                        for(Integer key : curr_goal.logic_var.keySet()) {
+
+                    if (curr_goal.logic_var.containsValue(curr_logic_var)) {
+                        for (Integer key : curr_goal.logic_var.keySet()) {
                             if (curr_goal.logic_var.get(key).equals(curr_logic_var)) {
                                 new_terms.put(key, bp.getTerm());
                             } else {new_logic_var.put(key, curr_goal.logic_var.get(key));}
                         }
-                    } else {new_logic_var = curr_goal.logic_var;}
+                    } else {
+                        new_logic_var = curr_goal.logic_var;
+                    }
+
                     new_goals.remove(i);
                     new_goals.add(i, new QueryArg(curr_goal.name, curr_goal.arity, new_terms, new_logic_var,
                             get_arg_list(curr_goal.arity, new_terms, new_logic_var)));
@@ -288,6 +290,7 @@ public class QuerySolver {
         return new_arg_list;
     }
 
+    // TODO: Delete archives
     private List<BoundedPair> get_true_bindings(List<List<BoundedPair>> bindings) {
         List<BoundedPair> true_bindings = new ArrayList<>();
         HashMap<String, String> hash = new HashMap<>();
@@ -318,7 +321,5 @@ public class QuerySolver {
     private void store_result(List<List<BoundedPair>> bindings) {
         final_bindings.addAll(bindings);
     }
-
-
 }
 

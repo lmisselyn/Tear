@@ -2,31 +2,31 @@ package norswap.sigh.interpreter;
 
 import java.util.Objects;
 
-/*
+/**
     DataStructure to manage the Keys of the hashmap in FactStorage
-    @name is the name of a fact
-    @arity is the number of terms in a fact
+    @succeed is the name of a fact
+    @Bounds is the number of terms in a fact
  */
 public class Pair {
-    private Object name;
-    private Object arity;
+    private Object succeed;
+    private Object Bounds;
 
-    public Pair(Object name, Object arity) {
-        this.name = name;
-        this.arity = arity;
+    public Pair(Object succeed, Object bounds) {
+        this.succeed = succeed;
+        this.Bounds = bounds;
     }
 
-    public Object getArity() {
-        return arity;
+    public Object getBounds() {
+        return Bounds;
     }
 
-    public Object getName() {
-        return name;
+    public Object getSucceed() {
+        return succeed;
     }
 
     @Override
     public String toString() {
-        return "(" + name + ", " + arity + ")";
+        return "(" + succeed + ", " + Bounds + ")";
     }
 
     @Override
@@ -34,11 +34,11 @@ public class Pair {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Pair pair = (Pair) o;
-        return Objects.equals(name, pair.name) && Objects.equals(arity, pair.arity);
+        return Objects.equals(succeed, pair.succeed) && Objects.equals(Bounds, pair.Bounds);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, arity);
+        return Objects.hash(succeed, Bounds);
     }
 }
