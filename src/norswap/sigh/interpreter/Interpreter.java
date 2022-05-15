@@ -51,7 +51,6 @@ public final class Interpreter
     private ScopeStorage storage = null;
     private RootScope rootScope;
     private ScopeStorage rootStorage;
-    private FactStorage factStorage;
     private RuleStorage ruleStorage;
 
 
@@ -88,11 +87,10 @@ public final class Interpreter
         visitor.register(WhileNode.class,                this::whileStmt);
         visitor.register(ReturnNode.class,               this::returnStmt);
         visitor.register(QueryNode.class,                this::query);
-        visitor.register(RuleDeclarationNode.class,      this::rule);
+        visitor.register(RuleDeclarationNode.class,      this::ruleDecl);
 
         visitor.registerFallback(node -> null);
 
-        factStorage = new FactStorage();
         ruleStorage = new RuleStorage();
     }
 
@@ -542,18 +540,26 @@ public final class Interpreter
         return null;
     }
 
+    private Void ruleDecl (RuleDeclarationNode node) {
+        Rule rule = new Rule(node.head, node.getHead_args(), node.tails, node.logic_operand, false);
+        ruleStorage.addRule(rule);
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     private boolean query (QueryNode node) {
         // Launch the class to solve the query with the current rule database
         QuerySolver query_solver = new QuerySolver(ruleStorage);
         Pair sol = query_solver.solve(node);
         List<List<BoundedPair>> solBoundedList = (List<List<BoundedPair>>) sol.getBounds();
-        System.out.println(solBoundedList);
-        if (solBoundedList != null) {
+        // Parcour the solBoundedList to make the array to assign the variable in case of solution found
+        if (solBoundedList != null && solBoundedList.size() != 0) {
+            // Datastructure: Key=variable to bind; value=All possible value
             HashMap<String, String[]> assi = new HashMap<>();
             for (int i = 0; i < solBoundedList.size(); i++) {
                 for (int j = 0; j < solBoundedList.get(i).size(); j++) {
                     if (i==0) {
+                        // Init the datastructure in i=0
                         String[] stringSol = new String[solBoundedList.size()];
                         stringSol[0] = solBoundedList.get(i).get(j).getTerm();
                         assi.put(solBoundedList.get(i).get(j).getLogicVar(), stringSol);
@@ -563,18 +569,13 @@ public final class Interpreter
                 }
             }
 
+            // Make the assignment to each of the variable in the query
             Scope scope = reactor.get(node, "scope");
             for (int i = 0; i < assi.keySet().toArray().length; i++) {
                 String key = (String) assi.keySet().toArray()[i];
-                assign(scope, key , assi.get(key), reactor.get(node.queryArgs, "type"));
+                assign(scope, key, assi.get(key), reactor.get(node.queryArgs, "type"));
             }
         }
         return Util.cast(sol.getSucceed(), Boolean.class);
-    }
-
-    private Void rule (RuleDeclarationNode node) {
-        Rule rule = new Rule(node.head, node.getHead_args(), node.tails, node.logic_operand, false);
-        ruleStorage.addRule(rule);
-        return null;
     }
 }

@@ -12,7 +12,7 @@ import java.util.Stack;
 public class QuerySolver {
 
     RuleStorage ruleStorage;
-    private List<ExecutionState> BacktrackStorage;
+    private List<ExecutionState> BacktrackStorage; // TODO: Delete archives
     private List<List<BoundedPair>> final_bindings;
     private List<QueryArg> main_goals;
     private List<BoundedPair> var_to_var;

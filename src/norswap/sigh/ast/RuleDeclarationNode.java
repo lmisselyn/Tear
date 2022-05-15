@@ -6,6 +6,13 @@ import norswap.utils.Util;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ DataStructure that represents a Rule
+ @head is the name of the head part
+ @head_args are the terms inside the head part
+ @tails is a list of queryArgNode (have a name and a lsit of term)
+ @logic_operands is the list of logic operands if present in the rule.
+ */
 public class RuleDeclarationNode extends DeclarationNode {
 
     public final String head;
@@ -27,8 +34,7 @@ public class RuleDeclarationNode extends DeclarationNode {
         for(int i = 0; i < tmp.size(); i++) {
             if(tmp.get(i).getClass().toString().equals("class norswap.sigh.ast.QueryArgNode")) {
                 this.tails.add((QueryArgNode) tmp.get(i));
-            }
-            else {
+            } else {
                 this.logic_operand.add((String) tmp.get(i));
             }
         }
@@ -37,10 +43,6 @@ public class RuleDeclarationNode extends DeclarationNode {
 
     public List<String> getHead_args() {
         return head_args;
-    }
-
-    public List<QueryArgNode> getTails() {
-        return tails;
     }
 
     @Override public String name () {

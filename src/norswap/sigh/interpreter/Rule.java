@@ -1,17 +1,16 @@
 package norswap.sigh.interpreter;
 import norswap.sigh.ast.QueryArgNode;
-import norswap.sigh.ast.StringLiteralNode;
-import norswap.sigh.ast.TailNode;
 import norswap.utils.Util;
 
 import java.util.List;
-import java.util.Set;
 
-/*
-    DataStructure that represents a Fact
-    @name is the name of the fact
-    @terms are the terms of the fact
-    @arity is the number of terms of a fact
+/**
+    DataStructure that represents a Rule
+    @head is the name of the head part
+    @head_args are the terms inside the head part
+    @tails is a list of queryArgNode (have a name and a lsit of term)
+    @logic_operands is the list of logic operands if present in the rule.
+    @fact is true if the Rule is a Fact here. (the tails are always true)
  */
 public class Rule {
     public final String head;

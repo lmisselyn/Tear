@@ -1,13 +1,11 @@
 package norswap.sigh.interpreter;
 
-import norswap.sigh.ast.StringLiteralNode;
-
 import java.util.Objects;
 
-/*
-    DataStructure to manage the Keys of the hashmap in FactStorage
-    @name is the name of a fact
-    @arity is the number of terms in a fact
+/**
+    BoundedPair linked a logic_var and a value. It's used to return a solution solver in the querySolver.solve
+    @logic_var is the name of the logic_var
+    @term is its value.
  */
 public class BoundedPair {
     private String logic_var;

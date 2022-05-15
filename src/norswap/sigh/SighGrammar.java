@@ -221,10 +221,6 @@ public class SighGrammar extends Grammar
         identifier.sep(0, COMMA)
         .as_list(String.class);
 
-    public rule tail =
-        seq(identifier, LPAREN, head_args, RPAREN)
-        .push($ -> new TailNode($.span(), $.$[0], $.$[1]));
-
     public rule logic_or =
         seq(OR).push($ -> $.str());
 
@@ -253,11 +249,11 @@ public class SighGrammar extends Grammar
 
     public rule tear_statement = lazy(() -> choice(
         this.fact_declaration,
-        this.rule_declaration)); // Rajouter les rules à coté de fact
+        this.rule_declaration));
 
     public rule tear_statements =
         tear_statement.at_least(0)
-        .as_list(StatementNode.class); // StatementNode ?
+        .as_list(StatementNode.class);
 
     public rule tear_block =
         seq(LBRACE, tear_statements, RBRACE)
@@ -266,10 +262,9 @@ public class SighGrammar extends Grammar
     public rule tear_expression =
         seq(_tear, tear_block);
 
-
     public rule query_args =
-        query_arg.sep(0, COMMA) // On peut faire une query d'un truc vide ? Argument à 0 ça accepte ça pour le moment.
-        .as_list(QueryArgNode.class);  // Prendre que des "," comme "ou" pour le moment ?
+        query_arg.sep(1, COMMA)
+        .as_list(QueryArgNode.class);
 
     public rule query =
         seq(_query, LPAREN, query_args, RPAREN)

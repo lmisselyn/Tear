@@ -124,7 +124,6 @@ public final class SemanticAnalysis
         walker.register(AssignmentNode.class,           PRE_VISIT,  analysis::assignment);
         walker.register(QueryArgNode.class,             PRE_VISIT,  analysis::queryArg);
         walker.register(QueryNode.class,                PRE_VISIT,  analysis::query);
-        walker.register(TailNode.class,                 PRE_VISIT,  analysis::tail);
 
         // types
         walker.register(SimpleTypeNode.class,           PRE_VISIT,  analysis::simpleType);
@@ -874,14 +873,6 @@ public final class SemanticAnalysis
         R.set(node, "type", TypeType.INSTANCE);
 
         forEachIndexed(node.getHead_args(), (i, param) -> {
-            R.set(param, "type", StringType.INSTANCE);
-        });
-    }
-
-    private void tail (TailNode node) {
-        R.set(node, "type", TypeType.INSTANCE);
-
-        forEachIndexed(node.getArgs(), (i, param) -> {
             R.set(param, "type", StringType.INSTANCE);
         });
     }
