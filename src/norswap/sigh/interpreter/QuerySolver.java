@@ -45,6 +45,7 @@ public class QuerySolver {
 
         if (result != null) {
             link_var_to_var(result);
+            System.out.println(result);
             return new Pair(true, result);
         }
         else {

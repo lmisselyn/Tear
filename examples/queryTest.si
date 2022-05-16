@@ -27,11 +27,8 @@ fun main (args: String) {
 
 
     var test1: Bool = query(father(X, Y))
-
-    if (test1)
-        print("man(Paul) -> True")
-    else
-        print("man(Paul) -> False")
+    if(test1)
+        print("true")
 }
 
 fun array_print (a: String[]): Int
