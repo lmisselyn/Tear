@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="SemanticAnalysisTests" tests="11" skipped="0" failures="0" errors="0" timestamp="2022-05-15T23:29:26" hostname="HP-Pavilion" time="0.098">
+<testsuite name="SemanticAnalysisTests" tests="14" skipped="0" failures="0" errors="0" timestamp="2022-05-16T10:19:49" hostname="HP-Pavilion" time="0.129">
   <properties/>
-  <testcase name="testArrayStructAccess" classname="SemanticAnalysisTests" time="0.018"/>
-  <testcase name="testCalls" classname="SemanticAnalysisTests" time="0.005"/>
-  <testcase name="testIfWhile" classname="SemanticAnalysisTests" time="0.007"/>
-  <testcase name="testInference" classname="SemanticAnalysisTests" time="0.003"/>
-  <testcase name="testLiteralsAndUnary" classname="SemanticAnalysisTests" time="0.006"/>
-  <testcase name="testNumericBinary" classname="SemanticAnalysisTests" time="0.017"/>
+  <testcase name="testArrayStructAccess" classname="SemanticAnalysisTests" time="0.02"/>
+  <testcase name="testCalls" classname="SemanticAnalysisTests" time="0.006"/>
+  <testcase name="testIfWhile" classname="SemanticAnalysisTests" time="0.008"/>
+  <testcase name="testInference" classname="SemanticAnalysisTests" time="0.004"/>
+  <testcase name="testLiteralsAndUnary" classname="SemanticAnalysisTests" time="0.01"/>
+  <testcase name="testNumericBinary" classname="SemanticAnalysisTests" time="0.025"/>
   <testcase name="testOtherBinary" classname="SemanticAnalysisTests" time="0.021"/>
-  <testcase name="testRootAndBlock" classname="SemanticAnalysisTests" time="0.006"/>
+  <testcase name="testRootAndBlock" classname="SemanticAnalysisTests" time="0.005"/>
+  <testcase name="testTearFact" classname="SemanticAnalysisTests" time="0.003"/>
+  <testcase name="testTearQuery" classname="SemanticAnalysisTests" time="0.003"/>
+  <testcase name="testTearRule" classname="SemanticAnalysisTests" time="0.002"/>
   <testcase name="testTypeAsValues" classname="SemanticAnalysisTests" time="0.003"/>
   <testcase name="testUnconditionalReturn" classname="SemanticAnalysisTests" time="0.004"/>
-  <testcase name="testVarDecl" classname="SemanticAnalysisTests" time="0.008"/>
+  <testcase name="testVarDecl" classname="SemanticAnalysisTests" time="0.012"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

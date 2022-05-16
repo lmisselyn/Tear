@@ -145,26 +145,32 @@ public class GrammarTests extends AutumnTestFixture {
 
         successExpect("man(\"Thomas\"). ", new FactDeclarationNode(null,
         "man", asList(new StringLiteralNode(null, "Thomas"))));
+
         successExpect("day_of_the_weekend(\"Monday\").", new FactDeclarationNode(null,
         "day_of_the_weekend", asList(new StringLiteralNode(null, "Monday"))));
 
-        successExpect("Father(\"Harry\", \"Paul\").", new FactDeclarationNode(null,
-        "Father", asList(
+        successExpect("father(\"Harry\", \"Paul\").", new FactDeclarationNode(null,
+        "father", asList(
                 new StringLiteralNode(null, "Harry"),
                 new StringLiteralNode(null, "Paul"))));
+
+        failure("man(\"Carl\")");
+        failure("man(Carl).");
+        failure("man(Carl)");
+        failure("man(1000).");
     }
 
     @Test
     public void testTearRule () {
         rule = grammar.rule_declaration;
 
-        successExpect("father(Paul, Marie) := child(Marie, Paul). ",
+        successExpect("father(P, M) := child(M, P). ",
                 new RuleDeclarationNode(
                         null,
                         "father",
-                        asList("Paul", "Marie"),
+                        asList("P", "M"),
                         asList(new QueryArgNode(null, "child",
-                                asList("Marie", "Paul")))));
+                                asList("M", "P")))));
 
         successExpect("good_day(Z) := weekend(Z) OR sunny_day(Z) AND ok(Z). ",
                 new RuleDeclarationNode(
@@ -179,6 +185,16 @@ public class GrammarTests extends AutumnTestFixture {
                                 new QueryArgNode(null, "ok", asList("Z"))
                         )
                 ));
+
+        failure("father(P, M) := child(M, P)");
+        failure("richard_father(P, \"Richard\") := child(\"Richard\", P).");
+//        successExpect("richard_father(P, \"Richard\") := child(\"Richard\", P). ",
+//                new RuleDeclarationNode(
+//                        null,
+//                        "richard_father",
+//                        asList("P", new StringLiteralNode(null, "Richard")),
+//                        asList(new QueryArgNode(null, "child",
+//                                asList(new StringLiteralNode(null, "Richard"), "P")))));
     }
 
     @Test

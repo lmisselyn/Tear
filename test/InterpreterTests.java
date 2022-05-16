@@ -353,10 +353,8 @@ public final class InterpreterTests extends TestFixture {
     // NOTE(norswap): Not incredibly complete, but should cover the basics.
 
     ////// OUR TESTS ////////
-    // checkThrows("code", NullPointerException.class)
-    // check("code", returned result, printed output)
-    // check_Expr("code", result)
-    @Test public void testQueryReturn()
+    // No tests on rule and facts here because we cannot retrieve data otherwise than querying
+    @Test public void testBasicQueryReturn()
     {
         rule = grammar.root;
         String tearDeclaration = "tear {"+
@@ -367,24 +365,66 @@ public final class InterpreterTests extends TestFixture {
 
         check(tearDeclaration +
                         "var X: String[] = [];" +
-                        "var test4: Bool = query(man(X));" +
+                        "var test: Bool = query(man(X));" +
                         "return X;"
                 , new Object[]{"Thomas", "Lambert", "Paul"});
 
         check(tearDeclaration +
                         "var X: String[] = [];" +
-                        "var test4: Bool = query(man(X));" +
-                        "return test4;"
+                        "var test: Bool = query(man(X));" +
+                        "return test;"
                 , true);
 
         check(tearDeclaration +
-                        "var test4: Bool = query(man(\"Carl\"));" +
-                        "return test4;"
+                        "var test: Bool = query(man(\"Carl\"));" +
+                        "return test;"
                 , false);
 
         check(tearDeclaration +
-                        "var test4: Bool = query(woman(\"Thomas\"));" +
-                        "return test4;"
+                        "var test: Bool = query(woman(\"Thomas\"));" +
+                        "return test;"
                 , false);
+    }
+
+    @Test public void testQueryReturn()
+    {
+        rule = grammar.root;
+
+        String tearDeclaration = "tear {\n" +
+                "    man(\"Thomas\").\n" +
+                "    man(\"Lambert\").\n" +
+                "    man(\"Paul\").\n" +
+                "    man(\"Vincent\").\n" +
+                "    father(\"Paul\", \"Harry\").\n" +
+                "    father(\"Pierre\", \"Louis\").\n" +
+                "\n" +
+                "    child(\"Lambert\", \"Vincent\").\n" +
+                "    child(\"Harry\", \"Jean\").\n" +
+                "    child(\"Louise\", \"Edward\").\n" +
+                "\n" +
+                "    not_girl(\"Edward\").\n" +
+                "\n" +
+                "    man(Z) := not_girl(Z).\n" +
+                "    father(P, C) := child(C, P) AND man(P).\n" +
+                "}";
+
+        check(tearDeclaration + "var X: String[] = []\n" +
+                        "var Y: String[] = []\n" +
+                        "var test5: Bool = query(father(X, Y))" +
+                        "return test5;"
+                , true);
+
+        check(tearDeclaration + "var X: String[] = []\n" +
+                        "var Y: String[] = []\n" +
+                        "var test5: Bool = query(father(X, Y))" +
+                        "return X;"
+                , new Object[]{"Paul", "Pierre", "Vincent", "Edward"});
+
+        check(tearDeclaration + "var X: String[] = []\n" +
+                        "var Y: String[] = []\n" +
+                        "var test5: Bool = query(father(X, Y))" +
+                        "return Y;"
+                , new Object[]{"Harry", "Louis", "Lambert", "Louise"});
+
     }
 }

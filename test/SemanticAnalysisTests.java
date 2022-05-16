@@ -301,4 +301,24 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
     }
 
     // ---------------------------------------------------------------------------------------------
+
+    // OUR CHANGES
+    @Test public void testTearFact()
+    {
+        successInput("tear {man(\"Carl\").}");
+        successInput("tear {day_of_the_weekend(\"Monday\").}");
+        successInput("tear {father(\"Harry\", \"Paul\").}");
+    }
+
+    @Test public void testTearRule()
+    {
+        successInput("tear {father(P, M) := child(M, P).}");
+        successInput("tear {good_day(Z) := weekend(Z) OR sunny_day(Z) AND ok(Z).}");
+    }
+
+    @Test public void testTearQuery()
+    {
+        successInput("var test1: Bool = query(woman(\"Bill\"))");
+        successInput("var test1: Bool = query(man(X))");
+    }
 }
