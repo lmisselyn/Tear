@@ -393,6 +393,7 @@ public final class InterpreterTests extends TestFixture {
         String tearDeclaration = "tear {\n" +
                 "    man(\"Thomas\").\n" +
                 "    man(\"Lambert\").\n" +
+                "    man(\"Jean\").\n"  +
                 "    man(\"Paul\").\n" +
                 "    man(\"Vincent\").\n" +
                 "    father(\"Paul\", \"Harry\").\n" +
@@ -418,13 +419,18 @@ public final class InterpreterTests extends TestFixture {
                         "var Y: String[] = []\n" +
                         "var test5: Bool = query(father(X, Y))" +
                         "return X;"
-                , new Object[]{"Paul", "Pierre", "Vincent", "Edward"});
+                , new Object[]{"Paul", "Pierre", "Vincent", "Jean", "Edward"});
 
         check(tearDeclaration + "var X: String[] = []\n" +
                         "var Y: String[] = []\n" +
                         "var test5: Bool = query(father(X, Y))" +
                         "return Y;"
-                , new Object[]{"Harry", "Louis", "Lambert", "Louise"});
+                , new Object[]{"Harry", "Louis", "Lambert", "Harry", "Louise"});
+
+        check(tearDeclaration + "var X: String[] = []\n" +
+                        "var test6: Bool = query(father(X, \"Harry\"))" +
+                        "return X;"
+                , new Object[]{"Paul", "Jean"});
 
     }
 }

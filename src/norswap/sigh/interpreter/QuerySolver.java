@@ -12,14 +12,12 @@ import java.util.Stack;
 public class QuerySolver {
 
     RuleStorage ruleStorage;
-    private List<ExecutionState> BacktrackStorage; // TODO: Delete archives
     private List<List<BoundedPair>> final_bindings;
-    private List<QueryArg> main_goals;
+    private List<QueryArgNode> main_goals;
     private List<BoundedPair> var_to_var;
 
     public QuerySolver(RuleStorage ruleStorage) {
         this.ruleStorage = ruleStorage;
-        this.BacktrackStorage = new ArrayList<>();
         this.final_bindings = new ArrayList<>();
         this.main_goals = new ArrayList<>();
         this.var_to_var = new ArrayList<>();
@@ -33,7 +31,7 @@ public class QuerySolver {
      */
     public Pair solve(QueryNode node) {
         List<QueryArg> query_goals = get_queryArgs(node.getQueryArgs());
-        main_goals.addAll(query_goals);
+        main_goals.addAll(node.getQueryArgs());
         List<Rule> rules = rules_for(query_goals.get(0).name);
 
         if (rules == null) {
@@ -45,7 +43,6 @@ public class QuerySolver {
 
         if (result != null) {
             link_var_to_var(result);
-            System.out.println(result);
             return new Pair(true, result);
         }
         else {
@@ -53,6 +50,11 @@ public class QuerySolver {
         }
     }
 
+    /**
+     * Takes the final bindings and replace temporary logic variables
+     * with the final ones
+     * @param bindings
+     */
     private void link_var_to_var(List<List<BoundedPair>> bindings) {
         for (List<BoundedPair> binding : bindings) {
             for (BoundedPair bd : binding) {
@@ -65,6 +67,12 @@ public class QuerySolver {
         }
     }
 
+    /**
+     * Takes the goals of the query and put them in a form
+     * more readable for the algorithm
+     * @param query_args_node
+     * @return A list of QueryArg
+     */
     private List<norswap.sigh.interpreter.QueryArg> get_queryArgs(List<QueryArgNode> query_args_node) {
         List<norswap.sigh.interpreter.QueryArg> query_args = new ArrayList<>();
         for (int i = 0; i < query_args_node.size(); i++) {
@@ -84,7 +92,6 @@ public class QuerySolver {
      * @param bindings : List of pairs (logicVariable, term)
      * @param goals : goals to achieve
      * @param rules : rules linked with the goals
-     *
      * @return A List of bindings that satisfies the query
      */
     private List<List<BoundedPair>> satisfy(Stack<ExecutionState> backtrack, List<List<BoundedPair>> bindings,
@@ -109,11 +116,9 @@ public class QuerySolver {
         }
     }
 
-    private List<List<BoundedPair>> succeed(List<List<BoundedPair>> bindings, Stack<ExecutionState> backtrack) {
-        BacktrackStorage = backtrack;
-        return bindings;
-    }
-
+    /**
+     * Pop the first execution state on the stack and run with it
+     */
     private List<List<BoundedPair>> doBacktrack(Stack<ExecutionState> backtrack) {
         ExecutionState state = backtrack.pop();
         if (!state.getBindings().isEmpty()) {
@@ -122,6 +127,14 @@ public class QuerySolver {
         return satisfy(backtrack, state.getBindings(), state.getRules(), state.getGoals());
     }
 
+    /**
+     * @param backtrack : stack where the Execution states are stored
+     * @param rules : rules with the same head as the goal
+     * @param bindings : List of pairs (logicVariable, term)
+     * @param goals : goals left to satisfy
+     * @return The List of bindings enhanced with the bindings that
+     * satisfy the first rule for the first goal
+     */
     private List<List<BoundedPair>> tryRule(Stack<ExecutionState> backtrack, List<List<BoundedPair>> bindings,
                                             List<Rule> rules, List<QueryArg> goals) {
         QueryArg goal = goals.get(0);
@@ -210,10 +223,10 @@ public class QuerySolver {
             List<List<BoundedPair>> bindings_for_this_rule = satisfy(tail_backtrack, tail_bindings, tail_rules, tail_goals);
 
             if (bindings_for_this_rule != null) {
-                for (QueryArg main_goal : main_goals) {
+                for (QueryArgNode main_goal : main_goals) {
                     if (main_goal.name.equals(rule.head) && main_goal.arity == rule.arity) {
-                        for (int i =0; i< rule.arity; i++) {
-                            var_to_var.add(new BoundedPair((String) main_goal.arg_list.get(i), (String) rule_args.get(i)));
+                        for (Integer key : main_goal.logic_var.keySet()) {
+                            var_to_var.add(new BoundedPair(main_goal.logic_var.get(key), (String) rule_args.get(key)));
                         }
                     }
                 }
@@ -228,6 +241,10 @@ public class QuerySolver {
         return bindings;
     }
 
+    /**
+     * Look vor variables that are already linked to a term in a rule
+     * and binds those same variables that are not linked yet to the same term
+     */
     private List<QueryArg> look_for_linked_var(List<List<BoundedPair>> bindings, List<QueryArg> goals) {
         List<QueryArg> new_goals = new ArrayList<>(goals);
         for (List<BoundedPair> binding : bindings) {
@@ -257,6 +274,9 @@ public class QuerySolver {
         return new_goals;
     }
 
+    /**
+     * Look for terms in goal args and bind the corrponding variables to this term
+     */
     private List<QueryArg> link_var_terms(List<QueryArg> goals, HashMap<Integer, String> terms, List<Object> rule_args) {
         List<QueryArg> new_goals = new ArrayList<>();
         for(int i = 0; i < goals.size(); i++) {
@@ -278,6 +298,13 @@ public class QuerySolver {
         return new_goals;
     }
 
+    /**
+     *
+     * @param arity
+     * @param terms
+     * @param logic_var
+     * @return new arg_list with terms in place of logic variables already linked to this term
+     */
     private List<Object> get_arg_list(Integer arity, HashMap<Integer, String> terms, HashMap<Integer, String> logic_var) {
         List<Object> new_arg_list = new ArrayList<>();
         for(int i = 0; i < arity; i++) {
@@ -291,22 +318,6 @@ public class QuerySolver {
         return new_arg_list;
     }
 
-    // TODO: Delete archives
-    private List<BoundedPair> get_true_bindings(List<List<BoundedPair>> bindings) {
-        List<BoundedPair> true_bindings = new ArrayList<>();
-        HashMap<String, String> hash = new HashMap<>();
-        for (List<BoundedPair> binding : bindings) {
-            for (BoundedPair bd : binding) {
-                if (!hash.containsKey(bd.getLogicVar())){
-                    hash.put(bd.getLogicVar(), bd.getTerm());
-                }
-            }
-        }
-        for (String key : hash.keySet()) {
-            true_bindings.add(new BoundedPair(key, hash.get(key)));
-        }
-        return true_bindings;
-    }
 
     /**
      * Take the name of a goal and return a list of rules which have

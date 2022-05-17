@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="InterpreterTests" tests="13" skipped="0" failures="0" errors="0" timestamp="2022-05-16T10:19:49" hostname="HP-Pavilion" time="0.198">
+<testsuite name="InterpreterTests" tests="13" skipped="0" failures="0" errors="0" timestamp="2022-05-17T11:59:38" hostname="lambert-hp-spectre" time="0.143">
   <properties/>
-  <testcase name="testArrayStructAccess" classname="InterpreterTests" time="0.042"/>
-  <testcase name="testBasicQueryReturn" classname="InterpreterTests" time="0.023"/>
-  <testcase name="testCalls" classname="InterpreterTests" time="0.009"/>
-  <testcase name="testIfWhile" classname="InterpreterTests" time="0.012"/>
-  <testcase name="testInference" classname="InterpreterTests" time="0.007"/>
-  <testcase name="testLiteralsAndUnary" classname="InterpreterTests" time="0.015"/>
-  <testcase name="testNumericBinary" classname="InterpreterTests" time="0.035"/>
-  <testcase name="testOtherBinary" classname="InterpreterTests" time="0.027"/>
-  <testcase name="testQueryReturn" classname="InterpreterTests" time="0.009"/>
-  <testcase name="testRootAndBlock" classname="InterpreterTests" time="0.006"/>
+  <testcase name="testArrayStructAccess" classname="InterpreterTests" time="0.027"/>
+  <testcase name="testBasicQueryReturn" classname="InterpreterTests" time="0.013"/>
+  <testcase name="testCalls" classname="InterpreterTests" time="0.007"/>
+  <testcase name="testIfWhile" classname="InterpreterTests" time="0.008"/>
+  <testcase name="testInference" classname="InterpreterTests" time="0.005"/>
+  <testcase name="testLiteralsAndUnary" classname="InterpreterTests" time="0.01"/>
+  <testcase name="testNumericBinary" classname="InterpreterTests" time="0.023"/>
+  <testcase name="testOtherBinary" classname="InterpreterTests" time="0.023"/>
+  <testcase name="testQueryReturn" classname="InterpreterTests" time="0.011"/>
+  <testcase name="testRootAndBlock" classname="InterpreterTests" time="0.008"/>
   <testcase name="testTypeAsValues" classname="InterpreterTests" time="0.002"/>
-  <testcase name="testUnconditionalReturn" classname="InterpreterTests" time="0.002"/>
+  <testcase name="testUnconditionalReturn" classname="InterpreterTests" time="0.001"/>
   <testcase name="testVarDecl" classname="InterpreterTests" time="0.004"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

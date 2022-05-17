@@ -141,6 +141,9 @@ public class GrammarTests extends AutumnTestFixture {
 
     @Test
     public void testTearFact () {
+        /*
+        A tear fact must follow the syntax : name ( terms (sep by ”,”) ) .
+        */
         rule = grammar.fact_declaration;
 
         successExpect("man(\"Thomas\"). ", new FactDeclarationNode(null,
@@ -154,14 +157,17 @@ public class GrammarTests extends AutumnTestFixture {
                 new StringLiteralNode(null, "Harry"),
                 new StringLiteralNode(null, "Paul"))));
 
-        failure("man(\"Carl\")");
-        failure("man(Carl).");
-        failure("man(Carl)");
-        failure("man(1000).");
+        failure("man(\"Carl\")"); // Point is missing
+        failure("man(Carl).");    // Quotes are missing
+        failure("man(Carl)");     // Both are missing
+        failure("man(1000).");    // Integer not accepted
     }
 
     @Test
     public void testTearRule () {
+        /*
+        A tear rule must follow the syntax : name ( Logical vars (sep by ”,”) ) := name(logical vars) (sep by AND) .
+        */
         rule = grammar.rule_declaration;
 
         successExpect("father(P, M) := child(M, P). ",
@@ -172,33 +178,30 @@ public class GrammarTests extends AutumnTestFixture {
                         asList(new QueryArgNode(null, "child",
                                 asList("M", "P")))));
 
-        successExpect("good_day(Z) := weekend(Z) OR sunny_day(Z) AND ok(Z). ",
+        successExpect("good_day(Z) := weekend(Z) AND sunny_day(Z) AND ok(Z). ",
                 new RuleDeclarationNode(
                         null,
                         "good_day",
                         asList("Z"),
                         asList(
                                 new QueryArgNode(null, "weekend", asList("Z")),
-                                "OR",
+                                "AND",
                                 new QueryArgNode(null, "sunny_day", asList("Z")),
                                 "AND",
                                 new QueryArgNode(null, "ok", asList("Z"))
                         )
                 ));
 
-        failure("father(P, M) := child(M, P)");
-        failure("richard_father(P, \"Richard\") := child(\"Richard\", P).");
-//        successExpect("richard_father(P, \"Richard\") := child(\"Richard\", P). ",
-//                new RuleDeclarationNode(
-//                        null,
-//                        "richard_father",
-//                        asList("P", new StringLiteralNode(null, "Richard")),
-//                        asList(new QueryArgNode(null, "child",
-//                                asList(new StringLiteralNode(null, "Richard"), "P")))));
+        failure("father(P, M) := child(M, P)");                                 // Point missing
+        failure("richard_father(P, \"Richard\") := child(\"Richard\", P).");    // No String accepted in rules
+
     }
 
     @Test
     public void testTearQuery() {
+        /*
+        A tear query must follow the syntax : query ( name ( Logical vars/terms (sep by ”,”) )
+        */
         rule = grammar.query;
 
         successExpect("query(woman(\"Bill\"))",
@@ -210,5 +213,15 @@ public class GrammarTests extends AutumnTestFixture {
                 new QueryNode(null,
                         asList(new QueryArgNode(null, "man", asList("X")))
                 ));
+        successExpect("query(father(X, Y))",
+                new QueryNode(null,
+                        asList(new QueryArgNode(null, "father", asList("X", "Y")))
+                ));
+        successExpect("query(father(X, \"Harry\"))",
+                new QueryNode(null,
+                        asList(new QueryArgNode(null, "father", asList("X", new StringLiteralNode(null, "Harry")))
+                        )));
+
+        failure("query(father(X, Y)");  // Missing parenthesis
     }
 }
